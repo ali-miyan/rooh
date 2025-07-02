@@ -12,14 +12,12 @@ import AbayaFAQ from "./_components/faq"
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
-      <Header />
       <HeroSlider />
       <AboutSection />
       <FeaturedProducts />
       <CategoryShowcase />
       <TestimonialCarousel />
       <AbayaFAQ />
-      <Footer />
     </div>
   )
 }
