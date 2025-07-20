@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Plus } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface FAQItem {
   id: string
@@ -77,39 +77,60 @@ interface FAQItemProps {
   item: FAQItem
   isOpen: boolean
   onToggle: () => void
+  index: number
 }
 
-function FAQItemComponent({ item, isOpen, onToggle }: FAQItemProps) {
+function FAQItemComponent({ item, isOpen, onToggle, index }: FAQItemProps) {
   return (
-    <div className="border-b border-neutral-200 last:border-b-0">
-      <button
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.05 }}
+      className="border-b border-neutral-200 last:border-b-0"
+    >
+      <motion.button
+        whileHover={{ backgroundColor: "rgba(245, 245, 245, 0.5)" }}
         onClick={onToggle}
-        className="w-full py-6 px-0 flex items-center justify-between text-left hover:bg-neutral-50/50 transition-colors duration-200 group"
+        className="w-full py-6 px-0 flex items-center justify-between text-left transition-colors duration-200 group"
       >
-        <h3 className="text-base md:text-lg font-medium text-neutral-800 pr-4 group-hover:text-neutral-900 transition-colors duration-200">
+        <motion.h3
+          whileHover={{ x: 5 }}
+          transition={{ duration: 0.2 }}
+          className="text-base md:text-lg font-medium text-neutral-800 pr-4 group-hover:text-neutral-900 transition-colors duration-200"
+        >
           {item.question}
-        </h3>
-        <div
-          className={cn(
-            "flex-shrink-0 w-6 h-6 flex items-center justify-center transition-all duration-300",
-            isOpen ? "rotate-45" : "rotate-0",
-          )}
+        </motion.h3>
+        <motion.div
+          animate={{ rotate: isOpen ? 45 : 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          whileHover={{ scale: 1.1 }}
+          className="flex-shrink-0 w-6 h-6 flex items-center justify-center"
         >
           <Plus className="w-5 h-5 text-neutral-600 group-hover:text-neutral-800 transition-colors duration-200" />
-        </div>
-      </button>
-
-      <div
-        className={cn(
-          "overflow-hidden transition-all duration-500 ease-in-out",
-          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
+        </motion.div>
+      </motion.button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <motion.div
+              initial={{ y: -10 }}
+              animate={{ y: 0 }}
+              exit={{ y: -10 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              className="pb-6 pr-10"
+            >
+              <p className="text-sm md:text-base text-neutral-600 leading-relaxed">{item.answer}</p>
+            </motion.div>
+          </motion.div>
         )}
-      >
-        <div className="pb-6 pr-10">
-          <p className="text-sm md:text-base text-neutral-600 leading-relaxed">{item.answer}</p>
-        </div>
-      </div>
-    </div>
+      </AnimatePresence>
+    </motion.div>
   )
 }
 
@@ -130,25 +151,72 @@ export default function AbayaFAQ() {
 
   return (
     <section className="w-full py-16 px-4 bg-white">
+      {/* JSON-LD Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqData.map((item) => ({
+              "@type": "Question",
+              name: item.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: item.answer,
+              },
+            })),
+          }),
+        }}
+      />
+
       <div className="max-w-4xl mx-auto">
         {/* Section Title */}
-        <div className="text-center mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
           <h2 className="text-2xl md:text-3xl font-medium text-neutral-800 tracking-[0.1em] uppercase">Abaya FAQs</h2>
-        </div>
+        </motion.div>
 
         {/* FAQ Items */}
-        <div className="bg-white rounded-lg shadow-sm">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="bg-white rounded-lg shadow-sm"
+        >
           <div className="divide-y divide-neutral-200">
-            {faqData.map((item) => (
+            {faqData.map((item, index) => (
               <FAQItemComponent
                 key={item.id}
                 item={item}
                 isOpen={openItems.has(item.id)}
                 onToggle={() => toggleItem(item.id)}
+                index={index}
               />
             ))}
           </div>
-        </div>
+        </motion.div>
+
+        {/* Additional Info */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="text-center mt-12"
+        >
+          <p className="text-neutral-600 mb-4">Still have questions?</p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-neutral-800 text-white px-6 py-3 text-sm font-medium tracking-wide hover:bg-neutral-900 transition-colors duration-200"
+          >
+            CONTACT US
+          </motion.button>
+        </motion.div>
       </div>
     </section>
   )
