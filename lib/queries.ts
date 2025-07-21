@@ -126,6 +126,9 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
 export async function getCategories(): Promise<Category[]> {
   return await client.fetch(CATEGORIES_QUERY);
 }
+export async function getCategoriesById(): Promise<Category[]> {
+  return await client.fetch(CATEGORIES_QUERY);
+}
 
 export async function getRelatedProducts(
   categoryId: string,

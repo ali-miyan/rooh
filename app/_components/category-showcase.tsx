@@ -5,6 +5,7 @@ import { Heart, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { urlFor } from "@/lib/client";
 
 interface ColorOption {
   name: string;
@@ -16,7 +17,7 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  image: string;
+  images: string;
   colors?: ColorOption[];
   isWishlisted?: boolean;
 }
@@ -28,6 +29,10 @@ interface ProductCardProps {
 }
 
 function ProductCard({ product, onWishlistToggle, index }: ProductCardProps) {
+   const imageUrl = product.images[0]
+      ? urlFor(product.images[0]).url()
+      : "/placeholder.svg";
+      
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -38,7 +43,7 @@ function ProductCard({ product, onWishlistToggle, index }: ProductCardProps) {
       {/* Product Image */}
       <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100">
         <Image
-          src={product.image || "/placeholder.svg"}
+          src={imageUrl || "/placeholder.svg"}
           alt={product.name}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -194,7 +199,7 @@ export default function TrendingAbayas({ products }: { products: Product[] }) {
                   priceCurrency: "INR",
                   availability: "https://schema.org/InStock",
                 },
-                image: product.image,
+                image: product.images[0],
               })
             ),
           }),
