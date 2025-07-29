@@ -109,6 +109,28 @@ const PRODUCTS_WITH_COUNT_QUERY = `
   }
 `;
 
+
+const activeBanners = `*[_type == "banner" && isActive == true]{
+  _id,
+  title,
+  subtitle,
+  image {
+    asset->{
+      _id,
+      url,
+    },
+    hotspot,
+    crop
+  },
+  link {
+    url,
+    text,
+    openInNewTab
+  },
+  displayOrder,
+  isActive
+}`
+
 export async function getProductsWithCount(count: number): Promise<Product[]> {
   return await client.fetch(PRODUCTS_WITH_COUNT_QUERY, { count: count - 1 });
 }
@@ -128,6 +150,9 @@ export async function getCategories(): Promise<Category[]> {
 }
 export async function getCategoriesById(): Promise<Category[]> {
   return await client.fetch(CATEGORIES_QUERY);
+}
+export async function getActiveBanners(): Promise<any[]> {
+  return await client.fetch(activeBanners);
 }
 
 export async function getRelatedProducts(

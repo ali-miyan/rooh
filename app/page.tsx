@@ -4,7 +4,7 @@ import FeaturedProducts from "@/app/_components/featured-products"
 import TrendingAbayas from "@/app/_components/category-showcase"
 import TestimonialCarousel from "./_components/client-slider"
 import AbayaFAQ from "./_components/faq"
-import { getCategories, getProductsWithCount } from "@/lib/queries"
+import { getActiveBanners, getCategories, getProductsWithCount } from "@/lib/queries"
 import type { Metadata } from "next"
 
 // Enable ISR with 10 second revalidation
@@ -37,10 +37,11 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const categories = await getCategories()
   const products = await getProductsWithCount(12)
+  const banners = await getActiveBanners()
 
   return (
     <div className="min-h-screen bg-white">
-      <HeroSlider />
+      <HeroSlider banners={banners} />
       <AboutSection />
       <FeaturedProducts categories={categories} />
       <TrendingAbayas products={products as any} />

@@ -152,7 +152,7 @@ export default function OccasionAbayasPage({ products }: any) {
           <div className="max-w-4xl mx-auto">
             <p className="text-sm text-neutral-700 leading-relaxed">
               If you're in need of a show-stopping outfit for a special occasion, you're in the right place. At
-              AbayaButh, we have a stunning collection of occasion abayas that are perfect for weddings, parties, and
+              Rooh, we have a stunning collection of occasion abayas that are perfect for weddings, parties, and
               other special events. Our occasion abayas are designed to make you feel confident and elegant, with
               intricate embellishments, luxurious fabrics, and flattering silhouettes.
             </p>
