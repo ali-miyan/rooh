@@ -6,11 +6,9 @@ import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import TopBar from "../../components/top-bar"
 
-export default function Header() {
+export default function Header({ categories }: { categories: object[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchFocused, setIsSearchFocused] = useState(false)
-
-  const navigationItems = ["NEW ARRIVALS", "ABAYAS", "THOBES", "KIDS", "HIJABS", "ACCESSORIES", "GIFTS", "TV"]
 
   return (
     <header className="w-full">
@@ -143,17 +141,17 @@ export default function Header() {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <nav className="flex justify-center space-x-8 py-4">
-              {navigationItems.map((item, index) => (
+              {categories.map((item:any, index) => (
                 <motion.a
-                  key={item}
+                  key={item._id}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.5 + index * 0.05 }}
                   whileHover={{ y: -2, scale: 1.05 }}
-                  href="#"
+                  href={`/category/${item.slug.current}`}
                   className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-all duration-200 tracking-wide relative"
                 >
-                  {item}
+                  {item.name}
                   <motion.div
                     className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900 origin-left"
                     initial={{ scaleX: 0 }}
@@ -200,18 +198,18 @@ export default function Header() {
 
                 {/* Mobile Navigation */}
                 <nav className="space-y-3">
-                  {navigationItems.map((item, index) => (
+                  {categories.map((item:any, index) => (
                     <motion.a
-                      key={item}
+                      key={item._id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
                       whileHover={{ x: 5, scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      href="#"
+                      href={`/category/${item.slug.current}`}
                       className="block text-sm font-medium text-gray-700 hover:text-gray-900 transition-all duration-200 tracking-wide"
                     >
-                      {item}
+                      {item.name}
                     </motion.a>
                   ))}
                 </nav>

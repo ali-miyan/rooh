@@ -5,7 +5,7 @@ export default function Features() {
     {
       icon: Truck,
       title: "Free Shipping",
-      description: "Free UK shipping on orders over £150",
+      description: "Free UK shipping on orders OVER ₹1050",
     },
     {
       icon: Shield,

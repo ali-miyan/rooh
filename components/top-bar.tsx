@@ -28,13 +28,12 @@ export default function TopBar() {
 
           {/* Center Message */}
           <div className="flex-1 text-center">
-            <span className="font-medium">FREE UK SHIPPING OVER £150</span>
+            <span className="font-medium">FREE UK SHIPPING OVER ₹1050</span>
           </div>
 
           {/* Contact & Currency - Right */}
           <div className="hidden md:flex items-center space-x-4 text-xs">
-            <span>020 3161 0087</span>
-            <span>orders@ROOH.com</span>
+             
             <div className="flex items-center space-x-1">
               <span>USD $</span>
               <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">

@@ -36,8 +36,10 @@ export interface Product {
   price: number
   originalPrice?: number
   description: any[]
+  productSize?: string
   features?: string[]
   inStock: boolean
   stockQuantity?: number
   list: boolean
+  _createdAt: string
 }

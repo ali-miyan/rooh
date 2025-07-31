@@ -15,6 +15,8 @@ const PRODUCT_QUERY = `
     },
     price,
     originalPrice,
+    productSize,
+    _createdAt,
     description,
     features,
     inStock,
@@ -37,6 +39,8 @@ const SINGLE_PRODUCT_QUERY = `
       description
     },
     price,
+    productSize,
+    _createdAt,
     originalPrice,
     description,
     features,
@@ -59,6 +63,8 @@ const PRODUCTS_BY_CATEGORY_QUERY = `
       description
     },
     price,
+    productSize,
+    _createdAt,
     originalPrice,
     description,
     features,
@@ -83,6 +89,8 @@ const RELATED_PRODUCTS_QUERY = `
     _id,
     name,
     slug,
+    productSize,
+    _createdAt,
     images,
     price,
     originalPrice
@@ -94,6 +102,8 @@ const PRODUCTS_WITH_COUNT_QUERY = `
     name,
     slug,
     images,
+    productSize,
+    _createdAt,
     category->{
       _id,
       name,

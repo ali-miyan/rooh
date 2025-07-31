@@ -523,7 +523,7 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
                         className="overflow-hidden"
                       >
                         <div className="mt-4 text-sm text-neutral-700 leading-relaxed whitespace-pre-line">
-                          {`FREE UK SHIPPING OVER £150
+                          {`FREE UK SHIPPING OVER ₹1050
 
 Standard Delivery (3-5 working days): £4.99
 Express Delivery (1-2 working days): £9.99

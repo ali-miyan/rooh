@@ -1,8 +1,9 @@
-import type React from "react"
-import type { Metadata } from "next"
-import "./globals.css"
-import Header from "./_components/header"
-import Footer from "./_components/footer"
+import type React from "react";
+import type { Metadata } from "next";
+import "./globals.css";
+import Header from "./_components/header";
+import Footer from "./_components/footer";
+import { getCategories } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: {
@@ -13,7 +14,13 @@ export const metadata: Metadata = {
     "A premium collection of luxury abayas featuring contemporary designs and traditional elegance. Discover modest fashion with modern style.",
   generator: "Next.js",
   applicationName: "Rooh",
-  keywords: ["luxury abayas", "premium abayas", "modest fashion", "contemporary designs", "traditional elegance"],
+  keywords: [
+    "luxury abayas",
+    "premium abayas",
+    "modest fashion",
+    "contemporary designs",
+    "traditional elegance",
+  ],
   authors: [{ name: "Rooh" }],
   creator: "Rooh",
   publisher: "Rooh",
@@ -28,7 +35,8 @@ export const metadata: Metadata = {
     locale: "en_US",
     siteName: "Rooh",
     title: "Rooh - Premium Luxury Abayas Collection",
-    description: "A premium collection of luxury abayas featuring contemporary designs and traditional elegance.",
+    description:
+      "A premium collection of luxury abayas featuring contemporary designs and traditional elegance.",
   },
   twitter: {
     card: "summary_large_image",
@@ -51,20 +59,22 @@ export const metadata: Metadata = {
     // google: "your-google-verification-token",
     // yandex: "your-yandex-verification-token",
   },
-}
+};
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
+  const categories = await getCategories();
+
   return (
     <html lang="en" className="font-custom">
       <body>
-        <Header />
+        <Header categories={categories} />
         {children}
         <Footer />
       </body>
     </html>
-  )
+  );
 }

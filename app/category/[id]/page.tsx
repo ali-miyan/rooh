@@ -60,6 +60,7 @@ export async function generateMetadata({
 export default async function ProductsPage({ params }: ProductPageProps) {
   const { id } = params;
   const products = await getProductsByCategory(id);
+  const categories = await getCategories();
 
-  return <ProductsList products={products} />;
+  return <ProductsList products={products} categories={categories} />;
 }
