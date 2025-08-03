@@ -1,141 +1,174 @@
-"use client"
-import { useState, useEffect, useRef } from "react"
-import { Plus, Minus, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, MessageCircle } from "lucide-react"
-import Image from "next/image"
-import { motion, AnimatePresence } from "framer-motion"
-import { PortableText } from "@portabletext/react"
-import type { Product } from "@/types/sanity"
-import { urlFor } from "@/lib/client"
+"use client";
+import { useState, useEffect, useRef } from "react";
+import {
+  Plus,
+  Minus,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  MessageCircle,
+  Crown,
+  AlertCircle,
+  Ruler,
+  Shield,
+  Truck,
+  RotateCcw,
+  Star,
+  Check,
+  Package,
+} from "lucide-react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { PortableText } from "@portabletext/react";
+import type { Product } from "@/types/sanity";
+import { urlFor } from "@/lib/client";
 
 interface ProductDetailPageProps {
-  product: Product
-  relatedProducts: Product[]
+  product: Product;
+  relatedProducts: Product[];
 }
 
-export default function ProductDetailPage({ product, relatedProducts }: ProductDetailPageProps) {
-  const [selectedColor, setSelectedColor] = useState("black")
-  const [selectedLength, setSelectedLength] = useState("52")
-  const [quantity, setQuantity] = useState(1)
-  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({})
-  const [showNextSections, setShowNextSections] = useState(false)
-  const [isRightSectionSticky, setIsRightSectionSticky] = useState(true)
-  
+export default function ProductDetailPage({
+  product,
+  relatedProducts,
+}: ProductDetailPageProps) {
+  const [selectedColor, setSelectedColor] = useState("black");
+  const [selectedLength, setSelectedLength] = useState("52");
+  const [quantity, setQuantity] = useState(1);
+  const [expandedSections, setExpandedSections] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [showNextSections, setShowNextSections] = useState(false);
+  const [isRightSectionSticky, setIsRightSectionSticky] = useState(true);
+
   // Modal and zoom states
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [zoomLevel, setZoomLevel] = useState(1)
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
   // Mobile slider state
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [isMobile, setIsMobile] = useState(false)
-  
-  const imagesEndRef = useRef<HTMLDivElement>(null)
-  const zoomImageRef = useRef<HTMLDivElement>(null)
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  const imagesEndRef = useRef<HTMLDivElement>(null);
+  const zoomImageRef = useRef<HTMLDivElement>(null);
 
   // Dummy data for colors and lengths
   const colors = [
     { name: "Black", value: "black", hex: "#000000" },
     { name: "Beige", value: "beige", hex: "#F5F5DC" },
-  ]
-  const lengths = ["52", "54", "56", "58", "60", "62"]
+  ];
+  const lengths = ["52", "54", "56", "58", "60", "62"];
 
   // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024)
-    }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       if (imagesEndRef.current) {
-        const rect = imagesEndRef.current.getBoundingClientRect()
-        const hasScrolledPastImages = rect.top <= window.innerHeight
-        setShowNextSections(hasScrolledPastImages)
-        setIsRightSectionSticky(!hasScrolledPastImages)
+        const rect = imagesEndRef.current.getBoundingClientRect();
+        const hasScrolledPastImages = rect.top <= window.innerHeight;
+        setShowNextSections(hasScrolledPastImages);
+        // setIsRightSectionSticky(!hasScrolledPastImages);
       }
-    }
-    window.addEventListener("scroll", handleScroll)
-    handleScroll()
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    };
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
       ...prev,
       [section]: !prev[section],
-    }))
-  }
+    }));
+  };
 
   const updateQuantity = (change: number) => {
-    setQuantity((prev) => Math.max(1, prev + change))
-  }
+    setQuantity((prev) => Math.max(1, prev + change));
+  };
 
   // Modal functions
   const openModal = (imageIndex: number) => {
     if (!isMobile) {
-      setCurrentImageIndex(imageIndex)
-      setIsModalOpen(true)
-      setZoomLevel(1)
-      setZoomPosition({ x: 0, y: 0 })
-      document.body.style.overflow = 'hidden'
+      setCurrentImageIndex(imageIndex);
+      setIsModalOpen(true);
+      setZoomLevel(1);
+      setZoomPosition({ x: 0, y: 0 });
+      document.body.style.overflow = "hidden";
     }
-  }
+  };
 
   const closeModal = () => {
-    setIsModalOpen(false)
-    document.body.style.overflow = 'unset'
-  }
+    setIsModalOpen(false);
+    document.body.style.overflow = "unset";
+  };
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % product.images.length)
-    setZoomLevel(1)
-    setZoomPosition({ x: 0, y: 0 })
-  }
+    setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
+    setZoomLevel(1);
+    setZoomPosition({ x: 0, y: 0 });
+  };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length)
-    setZoomLevel(1)
-    setZoomPosition({ x: 0, y: 0 })
-  }
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + product.images.length) % product.images.length
+    );
+    setZoomLevel(1);
+    setZoomPosition({ x: 0, y: 0 });
+  };
 
   const handleZoomIn = () => {
-    setZoomLevel((prev) => Math.min(prev + 0.5, 3))
-  }
+    setZoomLevel((prev) => Math.min(prev + 0.5, 3));
+  };
 
   const handleZoomOut = () => {
-    setZoomLevel((prev) => Math.max(prev - 0.5, 1))
+    setZoomLevel((prev) => Math.max(prev - 0.5, 1));
     if (zoomLevel <= 1.5) {
-      setZoomPosition({ x: 0, y: 0 })
+      setZoomPosition({ x: 0, y: 0 });
     }
-  }
+  };
 
   // Mobile slider functions
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % product.images.length)
-  }
+    setCurrentSlide((prev) => (prev + 1) % product.images.length);
+  };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + product.images.length) % product.images.length)
-  }
+    setCurrentSlide(
+      (prev) => (prev - 1 + product.images.length) % product.images.length
+    );
+  };
 
   // WhatsApp inquiry
   const handleWhatsAppInquiry = () => {
-    const message = `Hi! I'm interested in the ${product.name} - £${product.price.toFixed(2)}. Color: ${colors.find(c => c.value === selectedColor)?.name}, Length: ${selectedLength} inches, Quantity: ${quantity}. Could you please provide more details?`
-    const whatsappUrl = `https://wa.me/YOUR_PHONE_NUMBER?text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, '_blank')
-  }
+    const message = `Hi! I'm interested in the ${
+      product.name
+    } - ₹${product.price.toFixed(2)}. Color: ${
+      colors.find((c) => c.value === selectedColor)?.name
+    }, Length: ${selectedLength} inches, Quantity: ${quantity}. Could you please provide more details?`;
+    const whatsappUrl = `https://wa.me/YOUR_PHONE_NUMBER?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  };
 
   // Group images into rows of 2 for desktop
-  const imageRows = []
+  const imageRows = [];
   for (let i = 0; i < product.images.length; i += 2) {
-    imageRows.push(product.images.slice(i, i + 2))
+    imageRows.push(product.images.slice(i, i + 2));
   }
 
   return (
@@ -158,7 +191,9 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
               "@type": "Offer",
               price: product.price,
               priceCurrency: "GBP",
-              availability: product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              availability: product.inStock
+                ? "https://schema.org/InStock"
+                : "https://schema.org/OutOfStock",
               seller: {
                 "@type": "Organization",
                 name: "Rooh",
@@ -183,9 +218,6 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
         className="container mx-auto px-4 py-4"
       >
         <nav className="text-sm text-neutral-600">
-          <span>Abayas</span>
-          <span className="mx-2">/</span>
-          <span>Abayas</span>
           <span className="mx-2">/</span>
           <span>{product.category?.name}</span>
           <span className="mx-2">/</span>
@@ -211,7 +243,7 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
                   style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                 >
                   {product.images.map((image, index) => {
-                    const imageUrl = urlFor(image).width(600).height(800).url()
+                    const imageUrl = urlFor(image).width(600).height(800).url();
                     return (
                       <div key={index} className="w-full h-full flex-shrink-0">
                         <Image
@@ -222,10 +254,10 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
                           className="w-full h-full object-cover"
                         />
                       </div>
-                    )
+                    );
                   })}
                 </motion.div>
-                
+
                 {/* Slider Controls */}
                 <button
                   onClick={prevSlide}
@@ -239,7 +271,7 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
-                
+
                 {/* Dots Indicator */}
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                   {product.images.map((_, index) => (
@@ -247,7 +279,7 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
                       key={index}
                       onClick={() => setCurrentSlide(index)}
                       className={`w-2 h-2 rounded-full transition-colors ${
-                        index === currentSlide ? 'bg-white' : 'bg-white/50'
+                        index === currentSlide ? "bg-white" : "bg-white/50"
                       }`}
                     />
                   ))}
@@ -265,8 +297,11 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
                     className="grid grid-cols-2 gap-4"
                   >
                     {row.map((image, imageIndex) => {
-                      const globalIndex = rowIndex * 2 + imageIndex
-                      const imageUrl = urlFor(image).width(600).height(800).url()
+                      const globalIndex = rowIndex * 2 + imageIndex;
+                      const imageUrl = urlFor(image)
+                        .width(600)
+                        .height(800)
+                        .url();
                       return (
                         <motion.div
                           key={globalIndex}
@@ -283,10 +318,12 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                           />
                         </motion.div>
-                      )
+                      );
                     })}
                     {/* If this is the last row and has only 1 image, add empty space */}
-                    {row.length === 1 && <div className="w-full aspect-[3/4] bg-transparent"></div>}
+                    {row.length === 1 && (
+                      <div className="w-full aspect-[3/4] bg-transparent"></div>
+                    )}
                   </motion.div>
                 ))}
               </>
@@ -297,251 +334,281 @@ export default function ProductDetailPage({ product, relatedProducts }: ProductD
 
           {/* Product Details - Right Side */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className={`${isRightSectionSticky ? "lg:sticky lg:top-4 lg:h-fit" : ""} transition-all duration-300`}
+  initial={{ opacity: 0, x: 20 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.6, delay: 0.2 }}
+  className={`${
+    isRightSectionSticky ? "lg:sticky lg:top-4 lg:h-fit" : ""
+  } transition-all duration-300`}
+>
+  <div className="space-y-6 bg-white lg:p-8 lg:border border-neutral-200 backdrop-blur-sm">
+    {/* Product Title and Price */}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.3 }}
+      className="pb-5 border-b border-neutral-100"
+    >
+      <h1 className="text-3xl font-light mb-4 tracking-tight leading-tight text-neutral-900 font-serif">
+        {product.name}
+      </h1>
+      
+      {/* Premium Price Display */}
+      <div className="space-y-2">
+        <div className="flex items-end gap-4">
+          <div className="text-2xl font-light text-neutral-900 tracking-tight">
+            ₹{product.price.toFixed(2)}
+          </div>
+          {product.originalPrice && (
+            <div className="flex items-center gap-2">
+              <div className="text-lg text-neutral-400 line-through font-light">
+                ₹{product.originalPrice.toFixed(2)}
+              </div>
+              <div className="bg-red-600 text-white text-xs font-medium px-2 py-0.5 uppercase tracking-wide">
+                -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {!product.inStock && (
+        <div className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 bg-red-50 text-red-700 text-sm font-medium border border-red-200">
+          <AlertCircle className="w-4 h-4" />
+          Currently Unavailable
+        </div>
+      )}
+    </motion.div>
+
+    {/* Length Selection */}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.5 }}
+      className="space-y-3"
+    >
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider">
+          Length Selection
+        </h3>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          className="text-xs text-neutral-600 hover:text-neutral-900 transition-colors font-medium flex items-center gap-1"
+        >
+          <Ruler className="w-3 h-3" />
+          Size Guide
+        </motion.button>
+      </div>
+      
+      <div className="grid grid-cols-4 gap-2">
+        {lengths.map((length, index) => (
+          <motion.button
+            key={length}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setSelectedLength(length)}
+            className={`px-2 py-2.5 text-xs font-medium border transition-all duration-300 ${
+              selectedLength === length
+                ? "bg-neutral-900 text-white border-neutral-900 shadow-sm"
+                : "bg-white text-neutral-700 border-neutral-300 hover:border-neutral-500"
+            }`}
           >
-            <div className="space-y-6 bg-white lg:p-6 lg:rounded-lg lg:shadow-sm lg:border border-neutral-100">
-              {/* Product Title and Price */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <h1 className="text-3xl font-custom-bold text-neutral-800 mb-4 tracking-wide leading-tight">{product.name}</h1>
-                <div className="flex items-center gap-4">
-                  <div className="text-2xl font-semibold text-neutral-800">£{product.price.toFixed(2)}</div>
-                  {product.originalPrice && (
-                    <div className="text-xl text-neutral-500 line-through">£{product.originalPrice.toFixed(2)}</div>
-                  )}
-                </div>
-                {!product.inStock && <p className="text-red-600 font-medium mt-2">Out of Stock</p>}
-              </motion.div>
+            {length}"
+          </motion.button>
+        ))}
+      </div>
+    </motion.div>
 
-              {/* Color Selection */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                <h3 className="text-sm font-semibold text-neutral-800 mb-3 uppercase tracking-wider">
-                  Colour: {colors.find((c) => c.value === selectedColor)?.name}
-                </h3>
-                <div className="flex gap-3">
-                  {colors.map((color, index) => (
-                    <motion.button
-                      key={color.value}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setSelectedColor(color.value)}
-                      className={`w-10 h-10 rounded-full border-2 transition-all shadow-sm ${
-                        selectedColor === color.value
-                          ? "border-neutral-800 ring-2 ring-neutral-300"
-                          : "border-neutral-300 hover:border-neutral-400"
-                      }`}
-                      style={{ backgroundColor: color.hex }}
-                      aria-label={`Select ${color.name} color`}
-                    />
-                  ))}
-                </div>
-              </motion.div>
+    {/* WhatsApp Inquiry */}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.6 }}
+      className="space-y-4"
+    >
+      <motion.button
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+        onClick={handleWhatsAppInquiry}
+        className="w-full py-3.5 px-6 bg-emerald-600 text-white font-medium tracking-wide transition-all duration-300 hover:bg-emerald-700 flex items-center justify-center gap-2 text-sm uppercase shadow-sm hover:shadow-md"
+      >
+        <MessageCircle className="w-4 h-4" />
+        Inquire via WhatsApp
+      </motion.button>
 
-              {/* Length Selection */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                <h3 className="text-sm font-semibold text-neutral-800 mb-3 uppercase tracking-wider">Length (Inches)</h3>
-                <div className="flex flex-wrap gap-2">
-                  {lengths.map((length, index) => (
-                    <motion.button
-                      key={length}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setSelectedLength(length)}
-                      className={`px-4 py-2 text-sm font-medium border transition-colors rounded-md ${
-                        selectedLength === length
-                          ? "bg-neutral-800 text-white border-neutral-800 shadow-md"
-                          : "bg-white text-neutral-700 border-neutral-300 hover:border-neutral-400 hover:shadow-sm"
-                      }`}
-                    >
-                      {length}
-                    </motion.button>
-                  ))}
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  className="text-sm text-neutral-600 underline mt-3 hover:text-neutral-800 transition-colors font-medium"
-                >
-                  📏 Size Guide
-                </motion.button>
-              </motion.div>
+      {/* Trust Indicators */}
+      <div className="grid grid-cols-3 gap-3 py-3 border-t border-b border-neutral-100">
+        <div className="flex flex-col items-center space-y-1">
+          <Shield className="w-4 h-4 text-neutral-600" />
+          <div className="text-xs text-neutral-600 font-medium">Authentic</div>
+        </div>
+        <div className="flex flex-col items-center space-y-1">
+          <Truck className="w-4 h-4 text-neutral-600" />
+          <div className="text-xs text-neutral-600 font-medium">Fast Ship</div>
+        </div>
+        <div className="flex flex-col items-center space-y-1">
+          <RotateCcw className="w-4 h-4 text-neutral-600" />
+          <div className="text-xs text-neutral-600 font-medium">Returns</div>
+        </div>
+      </div>
 
-              {/* Quantity and WhatsApp Inquiry */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="space-y-4"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center border border-neutral-300 rounded-md overflow-hidden">
-                    <motion.button
-                      whileHover={{ backgroundColor: "#f9fafb" }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => updateQuantity(-1)}
-                      className="p-3 transition-colors hover:bg-neutral-50"
-                      disabled={quantity <= 1}
-                    >
-                      <Minus className="w-4 h-4" />
-                    </motion.button>
-                    <motion.span
-                      key={quantity}
-                      initial={{ scale: 1.2 }}
-                      animate={{ scale: 1 }}
-                      transition={{ duration: 0.2 }}
-                      className="px-6 py-3 text-center min-w-[80px] font-medium"
-                    >
-                      {quantity}
-                    </motion.span>
-                    <motion.button
-                      whileHover={{ backgroundColor: "#f9fafb" }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => updateQuantity(1)}
-                      className="p-3 transition-colors hover:bg-neutral-50"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </motion.button>
+      {/* Product Information */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.7 }}
+        className="bg-neutral-50 p-4 border border-neutral-100"
+      >
+        <div className="border-l-2 border-neutral-900 pl-3">
+          <h4 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-2">
+            Product Details
+          </h4>
+          {product.description && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="text-sm text-neutral-700 leading-relaxed">
+                <PortableText value={product.description} />
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+
+    {/* Expandable Sections */}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.7 }}
+      className="space-y-1 pt-4 border-t border-neutral-100"
+    >
+      {/* Product Highlights */}
+      <div className="border border-neutral-200 overflow-hidden bg-white">
+        <motion.button
+          whileHover={{ backgroundColor: "rgb(249 250 251)" }}
+          onClick={() => toggleSection("description")}
+          className="flex items-center justify-between w-full text-left p-4 transition-colors duration-200"
+        >
+          <h3 className="text-xs font-semibold text-neutral-900 tracking-wider uppercase flex items-center gap-2">
+            <Star className="w-3 h-3" />
+            Product Highlights
+          </h3>
+          <motion.div
+            animate={{
+              rotate: expandedSections.description ? 45 : 0,
+            }}
+            transition={{ duration: 0.2 }}
+            className="w-6 h-6 bg-neutral-900 text-white flex items-center justify-center"
+          >
+            <Plus className="w-3 h-3" />
+          </motion.div>
+        </motion.button>
+        <AnimatePresence>
+          {expandedSections.description && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden border-t border-neutral-200"
+            >
+              <div className="p-4 pt-3 bg-neutral-50">
+                {product.features && product.features.length > 0 && (
+                  <ul className="space-y-2">
+                    {product.features.map((feature, index) => (
+                      <motion.li
+                        key={index}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: index * 0.1,
+                        }}
+                        className="flex items-start gap-3 text-sm text-neutral-700"
+                      >
+                        <Check className="w-3 h-3 text-neutral-500 mt-0.5 flex-shrink-0" />
+                        <span className="leading-relaxed">{feature}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Delivery & Returns */}
+      <div className="border border-neutral-200 overflow-hidden bg-white">
+        <motion.button
+          whileHover={{ backgroundColor: "rgb(249 250 251)" }}
+          onClick={() => toggleSection("delivery")}
+          className="flex items-center justify-between w-full text-left p-4 transition-colors duration-200"
+        >
+          <h3 className="text-xs font-semibold text-neutral-900 tracking-wider uppercase flex items-center gap-2">
+            <Package className="w-3 h-3" />
+            Shipping & Returns
+          </h3>
+          <motion.div
+            animate={{ rotate: expandedSections.delivery ? 45 : 0 }}
+            transition={{ duration: 0.2 }}
+            className="w-6 h-6 bg-neutral-900 text-white flex items-center justify-center"
+          >
+            <Plus className="w-3 h-3" />
+          </motion.div>
+        </motion.button>
+        <AnimatePresence>
+          {expandedSections.delivery && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden border-t border-neutral-200"
+            >
+              <div className="p-4 pt-3 bg-neutral-50">
+                <div className="grid md:grid-cols-2 gap-4 text-sm text-neutral-700">
+                  <div>
+                    <h4 className="font-semibold text-neutral-900 mb-2 text-xs uppercase tracking-wide flex items-center gap-1">
+                      <Truck className="w-3 h-3" />
+                      Shipping
+                    </h4>
+                    <div className="space-y-1 leading-relaxed">
+                      <p>• Free shipping over ₹1,050</p>
+                      <p>• Standard: 3-5 days (£4.99)</p>
+                      <p>• Express: 1-2 days (£9.99)</p>
+                      <p>• Next day: £14.99</p>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-neutral-900 mb-2 text-xs uppercase tracking-wide flex items-center gap-1">
+                      <RotateCcw className="w-3 h-3" />
+                      Returns
+                    </h4>
+                    <div className="space-y-1 leading-relaxed">
+                      <p>• 30-day return policy</p>
+                      <p>• Unworn with tags</p>
+                      <p>• Original packaging</p>
+                      <p>• Free faulty returns</p>
+                    </div>
                   </div>
                 </div>
-                
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleWhatsAppInquiry}
-                  className="w-full py-4 px-6 bg-green-600 text-white font-semibold tracking-wide transition-colors hover:bg-green-700 rounded-md shadow-md hover:shadow-lg flex items-center justify-center gap-3"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  INQUIRE VIA WHATSAPP
-                </motion.button>
-
-                {/* Professional Note */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.7 }}
-                  className="text-sm text-neutral-600 bg-neutral-50 p-4 rounded-md"
-                >
-                  <p className="font-medium text-neutral-800 mb-1">Professional Service</p>
-                  <p>Get personalized assistance with sizing, styling advice, and detailed product information through our WhatsApp consultation.</p>
-                </motion.div>
-              </motion.div>
-
-              {/* Expandable Sections */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="space-y-4 pt-6"
-              >
-                {/* Product Description */}
-                <div className="border-t border-neutral-200 pt-4">
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    onClick={() => toggleSection("description")}
-                    className="flex items-center justify-between w-full text-left"
-                  >
-                    <h3 className="text-sm font-semibold text-neutral-800 tracking-wider uppercase">PRODUCT DESCRIPTION</h3>
-                    <motion.div
-                      animate={{ rotate: expandedSections.description ? 45 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Plus className="w-4 h-4" />
-                    </motion.div>
-                  </motion.button>
-                  <AnimatePresence>
-                    {expandedSections.description && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="mt-4 text-sm text-neutral-700 leading-relaxed">
-                          <PortableText value={product.description} />
-                          {product.features && product.features.length > 0 && (
-                            <div className="mt-4">
-                              <h4 className="font-semibold mb-2">Features:</h4>
-                              <ul className="list-disc list-inside space-y-1">
-                                {product.features.map((feature, index) => (
-                                  <motion.li
-                                    key={index}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                                  >
-                                    {feature}
-                                  </motion.li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Delivery & Returns */}
-                <div className="border-t border-neutral-200 pt-4">
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    onClick={() => toggleSection("delivery")}
-                    className="flex items-center justify-between w-full text-left"
-                  >
-                    <h3 className="text-sm font-semibold text-neutral-800 tracking-wider uppercase">DELIVERY & RETURNS</h3>
-                    <motion.div animate={{ rotate: expandedSections.delivery ? 45 : 0 }} transition={{ duration: 0.2 }}>
-                      <Plus className="w-4 h-4" />
-                    </motion.div>
-                  </motion.button>
-                  <AnimatePresence>
-                    {expandedSections.delivery && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="mt-4 text-sm text-neutral-700 leading-relaxed whitespace-pre-line">
-                          {`FREE UK SHIPPING OVER ₹1050
-
-Standard Delivery (3-5 working days): £4.99
-Express Delivery (1-2 working days): £9.99
-Next Day Delivery: £14.99
-International shipping available.
-
-RETURNS
-30-day return policy
-Items must be unworn and in original condition
-Return shipping costs apply unless item is faulty`}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  </div>
+</motion.div>
         </div>
       </div>
 
@@ -615,20 +682,28 @@ Return shipping costs apply unless item is faulty`}
                 ref={zoomImageRef}
                 className="relative w-full h-full overflow-hidden cursor-move"
                 style={{
-                  cursor: zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'
+                  cursor:
+                    zoomLevel > 1
+                      ? isDragging
+                        ? "grabbing"
+                        : "grab"
+                      : "default",
                 }}
               >
                 <motion.div
                   animate={{
                     scale: zoomLevel,
                     x: zoomPosition.x,
-                    y: zoomPosition.y
+                    y: zoomPosition.y,
                   }}
                   transition={{ type: "tween", duration: 0.2 }}
                   className="w-full h-full flex items-center justify-center"
                 >
                   <Image
-                    src={urlFor(product.images[currentImageIndex]).width(1200).height(1600).url()}
+                    src={urlFor(product.images[currentImageIndex])
+                      .width(1200)
+                      .height(1600)
+                      .url()}
                     alt={`${product.name} - View ${currentImageIndex + 1}`}
                     width={1200}
                     height={1600}
@@ -653,26 +728,6 @@ Return shipping costs apply unless item is faulty`}
             className="container mx-auto px-4 py-16"
           >
             <div className="border-t border-neutral-200 pt-16">
-              {/* Reviews Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="mb-16"
-              >
-                <h2 className="text-2xl font-custom-bold text-neutral-800 mb-8">Customer Reviews</h2>
-                <div className="bg-neutral-50 p-8 text-center rounded-lg">
-                  <p className="text-neutral-600 mb-4">No reviews yet. Be the first to review this product!</p>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-neutral-800 text-white px-6 py-3 text-sm hover:bg-neutral-900 transition-colors rounded-md font-medium"
-                  >
-                    Write a Review
-                  </motion.button>
-                </div>
-              </motion.div>
-
               {/* Related Products */}
               {relatedProducts.length > 0 && (
                 <motion.div
@@ -680,18 +735,26 @@ Return shipping costs apply unless item is faulty`}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                 >
-                  <h2 className="text-2xl font-custom-bold text-neutral-800 mb-8">You May Also Like</h2>
+                  <h2 className="text-2xl mb-8">
+                    You May Also Like
+                  </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct, index) => {
                       const imageUrl = relatedProduct.images?.[0]
-                        ? urlFor(relatedProduct.images[0]).width(450).height(600).url()
-                        : "/placeholder.svg"
+                        ? urlFor(relatedProduct.images[0])
+                            .width(450)
+                            .height(600)
+                            .url()
+                        : "/placeholder.svg";
                       return (
                         <motion.div
                           key={relatedProduct._id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                          transition={{
+                            duration: 0.5,
+                            delay: 0.5 + index * 0.1,
+                          }}
                           whileHover={{ y: -5 }}
                           className="group cursor-pointer"
                         >
@@ -704,14 +767,19 @@ Return shipping costs apply unless item is faulty`}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           </div>
-                          <motion.div whileHover={{ scale: 1.02 }} className="space-y-2">
+                          <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            className="space-y-2"
+                          >
                             <div className="text-sm font-semibold text-neutral-800">
-                              £{relatedProduct.price.toFixed(2)}
+                              ₹{relatedProduct.price.toFixed(2)}
                             </div>
-                            <h3 className="text-sm text-neutral-700 leading-relaxed">{relatedProduct.name}</h3>
+                            <h3 className="text-sm text-neutral-700 leading-relaxed">
+                              {relatedProduct.name}
+                            </h3>
                           </motion.div>
                         </motion.div>
-                      )
+                      );
                     })}
                   </div>
                 </motion.div>
@@ -721,5 +789,5 @@ Return shipping costs apply unless item is faulty`}
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }
