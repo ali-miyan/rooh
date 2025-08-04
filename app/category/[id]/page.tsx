@@ -59,8 +59,18 @@ export async function generateMetadata({
 
 export default async function ProductsPage({ params }: ProductPageProps) {
   const { id } = params;
-  const products = await getProductsByCategory(id);
+  const products = await getProductsByCategory(decodeURIComponent(id));
   const categories = await getCategories();
+  const category = categories.find((cat) => {
+    return cat.slug.current === decodeURIComponent(id);
+  });
 
-  return <ProductsList products={products} categories={categories} />;
+  return (
+    <ProductsList
+      products={products}
+      categories={categories}
+      categoryName={category?.name as string}
+      categoryDescription={category?.description as object}
+    />
+  );
 }

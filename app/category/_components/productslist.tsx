@@ -8,6 +8,7 @@ import type { Product } from "@/types/sanity";
 import { urlFor } from "@/lib/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { PortableText } from "@portabletext/react";
 
 const filterOptions = {
   price: [
@@ -30,11 +31,14 @@ const sortOptions = [
 export default function OccasionAbayasPage({
   products,
   categories,
+  categoryName,
+  categoryDescription,
 }: {
   products: Product[];
   categories: any;
+  categoryName: string;
+  categoryDescription: any;
 }) {
-
   const router = useRouter();
 
   const [wishlist, setWishlist] = useState<string[]>([]);
@@ -66,7 +70,6 @@ export default function OccasionAbayasPage({
     if (!products) return [];
 
     let filtered = products.filter((product: Product) => {
-
       // Apply price filter
       if (filters.price !== "All Prices") {
         const price = product.price;
@@ -169,11 +172,9 @@ export default function OccasionAbayasPage({
         className="container mx-auto px-4 py-4"
       >
         <nav className="text-sm text-neutral-600">
-          <span>Abayas</span>
+          <span><Link href={"/"}>Home</Link></span>
           <span className="mx-2">/</span>
-          <span>Abayas</span>
-          <span className="mx-2">/</span>
-          <span className="text-neutral-800">Occasion</span>
+          <span className="lowercase">{categoryName}</span>
         </nav>
       </motion.div>
 
@@ -186,20 +187,32 @@ export default function OccasionAbayasPage({
       >
         <div className="text-center mb-6">
           <h1 className="text-2xl font-custom-bold tracking-wider text-neutral-800 mb-2">
-            OCCASION ABAYAS
+            {categoryName}
           </h1>
           <p className="text-sm text-neutral-600 mb-4">
             ({filteredAndSortedProducts?.length || 0} PRODUCTS)
           </p>
           <div className="max-w-4xl mx-auto">
-            <p className="text-sm text-neutral-700 leading-relaxed">
+            {/* <p className="text-sm text-neutral-700 leading-relaxed">
               If you're in need of a show-stopping outfit for a special
               occasion, you're in the right place. At Rooh, we have a stunning
               collection of occasion abayas that are perfect for weddings,
               parties, and other special events. Our occasion abayas are
               designed to make you feel confident and elegant, with intricate
               embellishments, luxurious fabrics, and flattering silhouettes.
-            </p>
+            </p> */}
+            <PortableText
+              value={categoryDescription}
+              components={{
+                block: ({ children }) => {
+                  return (
+                    <p className="text-sm text-neutral-700 leading-relaxed">
+                      {children}
+                    </p>
+                  );
+                },
+              }}
+            />
           </div>
         </div>
       </motion.div>
@@ -222,17 +235,15 @@ export default function OccasionAbayasPage({
             >
               <FilterDropdown
                 label="Category"
-                options={[
-                  ...categories.map((cat: any) => cat.name),
-                ]}
+                options={[...categories.map((cat: any) => cat.name)]}
                 value={filters.category as any}
                 onChange={(value) => {
-                    const selectedCategory = categories.find(
-                      (cat: any) => cat.name === value
-                    );
-                    if (selectedCategory?.slug?.current) {
-                      router.push(`/category/${selectedCategory.slug.current}`);
-                    }
+                  const selectedCategory = categories.find(
+                    (cat: any) => cat.name === value
+                  );
+                  if (selectedCategory?.slug?.current) {
+                    router.push(`/category/${selectedCategory.slug.current}`);
+                  }
                 }}
               />
             </motion.div>

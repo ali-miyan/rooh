@@ -2,14 +2,12 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus,
-  Minus,
   X,
   ChevronLeft,
   ChevronRight,
   ZoomIn,
   ZoomOut,
   MessageCircle,
-  Crown,
   AlertCircle,
   Ruler,
   Shield,
@@ -24,6 +22,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import type { Product } from "@/types/sanity";
 import { urlFor } from "@/lib/client";
+import Link from "next/link";
+import sizeGuide from "@/public/WhatsApp Image 2025-08-03 at 23.00.44_712c86b7.jpg";
 
 interface ProductDetailPageProps {
   product: Product;
@@ -34,14 +34,30 @@ export default function ProductDetailPage({
   product,
   relatedProducts,
 }: ProductDetailPageProps) {
-  const [selectedColor, setSelectedColor] = useState("black");
-  const [selectedLength, setSelectedLength] = useState("52");
+  console.log(product);
+
+  const [selectedLength, setSelectedLength] = useState(
+    product.sizes?.[0]?.size === "custom"
+      ? product.sizes[0].customSize
+      : product.sizes?.[0]?.size || "52"
+  );
   const [quantity, setQuantity] = useState(1);
   const [expandedSections, setExpandedSections] = useState<{
     [key: string]: boolean;
   }>({});
   const [showNextSections, setShowNextSections] = useState(false);
   const [isRightSectionSticky, setIsRightSectionSticky] = useState(true);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+
+  const openSizeGuide = () => {
+    setShowSizeGuide(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeSizeGuide = () => {
+    setShowSizeGuide(false);
+    document.body.style.overflow = "unset";
+  };
 
   // Modal and zoom states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,7 +65,6 @@ export default function ProductDetailPage({
   const [zoomLevel, setZoomLevel] = useState(1);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   // Mobile slider state
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -57,13 +72,16 @@ export default function ProductDetailPage({
 
   const imagesEndRef = useRef<HTMLDivElement>(null);
   const zoomImageRef = useRef<HTMLDivElement>(null);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   // Dummy data for colors and lengths
   const colors = [
     { name: "Black", value: "black", hex: "#000000" },
     { name: "Beige", value: "beige", hex: "#F5F5DC" },
   ];
-  const lengths = ["52", "54", "56", "58", "60", "62"];
+  const lengths = product.sizes?.map((size) =>
+    size.size === "custom" ? size.customSize : size.size
+  ) || ["52", "54", "56", "58", "60", "62"]; // fallback to default if no sizes
 
   // Check if mobile
   useEffect(() => {
@@ -96,9 +114,49 @@ export default function ProductDetailPage({
     }));
   };
 
-  const updateQuantity = (change: number) => {
-    setQuantity((prev) => Math.max(1, prev + change));
+  const handleMouseDown = (e: any) => {
+    if (zoomLevel > 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.clientX - zoomPosition.x,
+        y: e.clientY - zoomPosition.y,
+      });
+      e.preventDefault();
+    }
   };
+
+  const handleMouseMove = (e: any) => {
+    if (isDragging && zoomLevel > 1) {
+      const newX = e.clientX - dragStart.x;
+      const newY = e.clientY - dragStart.y;
+
+      // Optional: Add boundaries to prevent dragging too far
+      const maxX = (zoomLevel - 1) * 200; // Adjust these values as needed
+      const maxY = (zoomLevel - 1) * 200;
+
+      setZoomPosition({
+        x: Math.max(-maxX, Math.min(maxX, newX)),
+        y: Math.max(-maxY, Math.min(maxY, newY)),
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Add these useEffect hooks for mouse events
+  useEffect(() => {
+    if (isModalOpen) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+
+      return () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+    }
+  }, [isDragging, dragStart, zoomLevel, isModalOpen]);
 
   // Modal functions
   const openModal = (imageIndex: number) => {
@@ -156,10 +214,10 @@ export default function ProductDetailPage({
   const handleWhatsAppInquiry = () => {
     const message = `Hi! I'm interested in the ${
       product.name
-    } - ₹${product.price.toFixed(2)}. Color: ${
-      colors.find((c) => c.value === selectedColor)?.name
-    }, Length: ${selectedLength} inches, Quantity: ${quantity}. Could you please provide more details?`;
-    const whatsappUrl = `https://wa.me/YOUR_PHONE_NUMBER?text=${encodeURIComponent(
+    } - ₹${product.price.toFixed(
+      2
+    )}., Length: ${selectedLength} inches. Could you please provide more details?`;
+    const whatsappUrl = `https://wa.me/${"+96876429013"}?text=${encodeURIComponent(
       message
     )}`;
     window.open(whatsappUrl, "_blank");
@@ -173,6 +231,43 @@ export default function ProductDetailPage({
 
   return (
     <div className="min-h-screen bg-white font-custom">
+      <AnimatePresence>
+        {showSizeGuide && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            onClick={closeSizeGuide}
+          >
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+              className="relative max-w-4xl max-h-[90vh] w-full h-full flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={closeSizeGuide}
+                className="absolute top-4 right-4 z-10 bg-white/20 p-2 rounded-full hover:bg-white/30 transition-colors"
+              >
+                <X className="w-6 h-6 text-white" />
+              </button>
+
+              {/* Size Guide Image */}
+              <Image
+                src={sizeGuide}
+                alt="Size Guide Chart"
+                width={800}
+                height={600}
+                className="max-w-full max-h-full object-contain"
+                priority
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* JSON-LD Structured Data for SEO */}
       <script
         type="application/ld+json"
@@ -217,11 +312,18 @@ export default function ProductDetailPage({
         transition={{ duration: 0.4 }}
         className="container mx-auto px-4 py-4"
       >
-        <nav className="text-sm text-neutral-600">
+        <nav className="text-sm text-neutral-600 py-2">
+          <span>
+            <Link href={"/"}>Home</Link>
+          </span>
           <span className="mx-2">/</span>
-          <span>{product.category?.name}</span>
+          <span className="lowercase">
+            <Link href={"/category/" + product.category?.slug.current}>
+              {product.category?.name}
+            </Link>
+          </span>
           <span className="mx-2">/</span>
-          <span className="text-neutral-800">{product.name}</span>
+          <span className="text-neutral-800 lowercase">{product.name}</span>
         </nav>
       </motion.div>
 
@@ -334,281 +436,296 @@ export default function ProductDetailPage({
 
           {/* Product Details - Right Side */}
           <motion.div
-  initial={{ opacity: 0, x: 20 }}
-  animate={{ opacity: 1, x: 0 }}
-  transition={{ duration: 0.6, delay: 0.2 }}
-  className={`${
-    isRightSectionSticky ? "lg:sticky lg:top-4 lg:h-fit" : ""
-  } transition-all duration-300`}
->
-  <div className="space-y-6 bg-white lg:p-8 lg:border border-neutral-200 backdrop-blur-sm">
-    {/* Product Title and Price */}
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.3 }}
-      className="pb-5 border-b border-neutral-100"
-    >
-      <h1 className="text-3xl font-light mb-4 tracking-tight leading-tight text-neutral-900 font-serif">
-        {product.name}
-      </h1>
-      
-      {/* Premium Price Display */}
-      <div className="space-y-2">
-        <div className="flex items-end gap-4">
-          <div className="text-2xl font-light text-neutral-900 tracking-tight">
-            ₹{product.price.toFixed(2)}
-          </div>
-          {product.originalPrice && (
-            <div className="flex items-center gap-2">
-              <div className="text-lg text-neutral-400 line-through font-light">
-                ₹{product.originalPrice.toFixed(2)}
-              </div>
-              <div className="bg-red-600 text-white text-xs font-medium px-2 py-0.5 uppercase tracking-wide">
-                -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {!product.inStock && (
-        <div className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 bg-red-50 text-red-700 text-sm font-medium border border-red-200">
-          <AlertCircle className="w-4 h-4" />
-          Currently Unavailable
-        </div>
-      )}
-    </motion.div>
-
-    {/* Length Selection */}
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.5 }}
-      className="space-y-3"
-    >
-      <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider">
-          Length Selection
-        </h3>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          className="text-xs text-neutral-600 hover:text-neutral-900 transition-colors font-medium flex items-center gap-1"
-        >
-          <Ruler className="w-3 h-3" />
-          Size Guide
-        </motion.button>
-      </div>
-      
-      <div className="grid grid-cols-4 gap-2">
-        {lengths.map((length, index) => (
-          <motion.button
-            key={length}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setSelectedLength(length)}
-            className={`px-2 py-2.5 text-xs font-medium border transition-all duration-300 ${
-              selectedLength === length
-                ? "bg-neutral-900 text-white border-neutral-900 shadow-sm"
-                : "bg-white text-neutral-700 border-neutral-300 hover:border-neutral-500"
-            }`}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className={`${
+              isRightSectionSticky ? "lg:sticky lg:top-4 lg:h-fit" : ""
+            } transition-all duration-300`}
           >
-            {length}"
-          </motion.button>
-        ))}
-      </div>
-    </motion.div>
+            <div className="space-y-6 bg-white lg:p-8 lg:border border-neutral-200 backdrop-blur-sm">
+              {/* Product Title and Price */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="pb-5 border-b border-neutral-100"
+              >
+                <h1 className="text-3xl font-light mb-4 tracking-tight leading-tight text-neutral-900 font-serif">
+                  {product.name}
+                </h1>
 
-    {/* WhatsApp Inquiry */}
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.6 }}
-      className="space-y-4"
-    >
-      <motion.button
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.99 }}
-        onClick={handleWhatsAppInquiry}
-        className="w-full py-3.5 px-6 bg-emerald-600 text-white font-medium tracking-wide transition-all duration-300 hover:bg-emerald-700 flex items-center justify-center gap-2 text-sm uppercase shadow-sm hover:shadow-md"
-      >
-        <MessageCircle className="w-4 h-4" />
-        Inquire via WhatsApp
-      </motion.button>
+                {/* Premium Price Display */}
+                <div className="space-y-2">
+                  <div className="flex items-end gap-4">
+                    <div className="text-2xl font-light text-neutral-900 tracking-tight">
+                      ₹{product.price.toFixed(2)}
+                    </div>
+                    {product.originalPrice && (
+                      <div className="flex items-center gap-2">
+                        <div className="text-lg text-neutral-400 line-through font-light">
+                          ₹{product.originalPrice.toFixed(2)}
+                        </div>
+                        <div className="bg-red-600 text-white text-xs font-medium px-2 py-0.5 uppercase tracking-wide">
+                          -
+                          {Math.round(
+                            ((product.originalPrice - product.price) /
+                              product.originalPrice) *
+                              100
+                          )}
+                          %
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-      {/* Trust Indicators */}
-      <div className="grid grid-cols-3 gap-3 py-3 border-t border-b border-neutral-100">
-        <div className="flex flex-col items-center space-y-1">
-          <Shield className="w-4 h-4 text-neutral-600" />
-          <div className="text-xs text-neutral-600 font-medium">Authentic</div>
-        </div>
-        <div className="flex flex-col items-center space-y-1">
-          <Truck className="w-4 h-4 text-neutral-600" />
-          <div className="text-xs text-neutral-600 font-medium">Fast Ship</div>
-        </div>
-        <div className="flex flex-col items-center space-y-1">
-          <RotateCcw className="w-4 h-4 text-neutral-600" />
-          <div className="text-xs text-neutral-600 font-medium">Returns</div>
-        </div>
-      </div>
-
-      {/* Product Information */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.7 }}
-        className="bg-neutral-50 p-4 border border-neutral-100"
-      >
-        <div className="border-l-2 border-neutral-900 pl-3">
-          <h4 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-2">
-            Product Details
-          </h4>
-          {product.description && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden"
-            >
-              <div className="text-sm text-neutral-700 leading-relaxed">
-                <PortableText value={product.description} />
-              </div>
-            </motion.div>
-          )}
-        </div>
-      </motion.div>
-    </motion.div>
-
-    {/* Expandable Sections */}
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.7 }}
-      className="space-y-1 pt-4 border-t border-neutral-100"
-    >
-      {/* Product Highlights */}
-      <div className="border border-neutral-200 overflow-hidden bg-white">
-        <motion.button
-          whileHover={{ backgroundColor: "rgb(249 250 251)" }}
-          onClick={() => toggleSection("description")}
-          className="flex items-center justify-between w-full text-left p-4 transition-colors duration-200"
-        >
-          <h3 className="text-xs font-semibold text-neutral-900 tracking-wider uppercase flex items-center gap-2">
-            <Star className="w-3 h-3" />
-            Product Highlights
-          </h3>
-          <motion.div
-            animate={{
-              rotate: expandedSections.description ? 45 : 0,
-            }}
-            transition={{ duration: 0.2 }}
-            className="w-6 h-6 bg-neutral-900 text-white flex items-center justify-center"
-          >
-            <Plus className="w-3 h-3" />
-          </motion.div>
-        </motion.button>
-        <AnimatePresence>
-          {expandedSections.description && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden border-t border-neutral-200"
-            >
-              <div className="p-4 pt-3 bg-neutral-50">
-                {product.features && product.features.length > 0 && (
-                  <ul className="space-y-2">
-                    {product.features.map((feature, index) => (
-                      <motion.li
-                        key={index}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                          duration: 0.3,
-                          delay: index * 0.1,
-                        }}
-                        className="flex items-start gap-3 text-sm text-neutral-700"
-                      >
-                        <Check className="w-3 h-3 text-neutral-500 mt-0.5 flex-shrink-0" />
-                        <span className="leading-relaxed">{feature}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
+                {!product.inStock && (
+                  <div className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 bg-red-50 text-red-700 text-sm font-medium border border-red-200">
+                    <AlertCircle className="w-4 h-4" />
+                    Currently Unavailable
+                  </div>
                 )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+              </motion.div>
 
-      {/* Delivery & Returns */}
-      <div className="border border-neutral-200 overflow-hidden bg-white">
-        <motion.button
-          whileHover={{ backgroundColor: "rgb(249 250 251)" }}
-          onClick={() => toggleSection("delivery")}
-          className="flex items-center justify-between w-full text-left p-4 transition-colors duration-200"
-        >
-          <h3 className="text-xs font-semibold text-neutral-900 tracking-wider uppercase flex items-center gap-2">
-            <Package className="w-3 h-3" />
-            Shipping & Returns
-          </h3>
-          <motion.div
-            animate={{ rotate: expandedSections.delivery ? 45 : 0 }}
-            transition={{ duration: 0.2 }}
-            className="w-6 h-6 bg-neutral-900 text-white flex items-center justify-center"
-          >
-            <Plus className="w-3 h-3" />
-          </motion.div>
-        </motion.button>
-        <AnimatePresence>
-          {expandedSections.delivery && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden border-t border-neutral-200"
-            >
-              <div className="p-4 pt-3 bg-neutral-50">
-                <div className="grid md:grid-cols-2 gap-4 text-sm text-neutral-700">
-                  <div>
-                    <h4 className="font-semibold text-neutral-900 mb-2 text-xs uppercase tracking-wide flex items-center gap-1">
-                      <Truck className="w-3 h-3" />
-                      Shipping
-                    </h4>
-                    <div className="space-y-1 leading-relaxed">
-                      <p>• Free shipping over ₹1,050</p>
-                      <p>• Standard: 3-5 days (£4.99)</p>
-                      <p>• Express: 1-2 days (£9.99)</p>
-                      <p>• Next day: £14.99</p>
+              {/* Length Selection */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider">
+                    Length Selection
+                  </h3>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    onClick={openSizeGuide}
+                    className="text-xs text-neutral-600 hover:text-neutral-900 transition-colors font-medium flex items-center gap-1"
+                  >
+                    <Ruler className="w-3 h-3" />
+                    Size Guide
+                  </motion.button>
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {lengths.map((length, index) => (
+                    <motion.button
+                      key={length}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setSelectedLength(length)}
+                      className={`px-2 py-2.5 text-xs font-medium border transition-all duration-300 ${
+                        selectedLength === length
+                          ? "bg-neutral-900 text-white border-neutral-900 shadow-sm"
+                          : "bg-white text-neutral-700 border-neutral-300 hover:border-neutral-500"
+                      }`}
+                    >
+                      {length}"
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* WhatsApp Inquiry */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="space-y-4"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={handleWhatsAppInquiry}
+                  className="w-full py-3.5 px-6 bg-emerald-600 text-white font-medium tracking-wide transition-all duration-300 hover:bg-emerald-700 flex items-center justify-center gap-2 text-sm uppercase shadow-sm hover:shadow-md"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Inquire via WhatsApp
+                </motion.button>
+
+                {/* Trust Indicators */}
+                <div className="grid grid-cols-3 gap-3 py-3 border-t border-b border-neutral-100">
+                  <div className="flex flex-col items-center space-y-1">
+                    <Shield className="w-4 h-4 text-neutral-600" />
+                    <div className="text-xs text-neutral-600 font-medium">
+                      Authentic
                     </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-neutral-900 mb-2 text-xs uppercase tracking-wide flex items-center gap-1">
-                      <RotateCcw className="w-3 h-3" />
+                  <div className="flex flex-col items-center space-y-1">
+                    <Truck className="w-4 h-4 text-neutral-600" />
+                    <div className="text-xs text-neutral-600 font-medium">
+                      Fast Ship
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center space-y-1">
+                    <RotateCcw className="w-4 h-4 text-neutral-600" />
+                    <div className="text-xs text-neutral-600 font-medium">
                       Returns
-                    </h4>
-                    <div className="space-y-1 leading-relaxed">
-                      <p>• 30-day return policy</p>
-                      <p>• Unworn with tags</p>
-                      <p>• Original packaging</p>
-                      <p>• Free faulty returns</p>
                     </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.div>
-  </div>
-</motion.div>
+
+                {/* Product Information */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                  className="bg-neutral-50 p-4 border border-neutral-100"
+                >
+                  <div className="border-l-2 border-neutral-900 pl-3">
+                    <h4 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-2">
+                      Product Details
+                    </h4>
+                    {product.description && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="text-sm text-neutral-700 leading-relaxed">
+                          <PortableText value={product.description} />
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* Expandable Sections */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="space-y-1 pt-4 border-t border-neutral-100"
+              >
+                {/* Product Highlights */}
+                <div className="border border-neutral-200 overflow-hidden bg-white">
+                  <motion.button
+                    whileHover={{ backgroundColor: "rgb(249 250 251)" }}
+                    onClick={() => toggleSection("description")}
+                    className="flex items-center justify-between w-full text-left p-4 transition-colors duration-200"
+                  >
+                    <h3 className="text-xs font-semibold text-neutral-900 tracking-wider uppercase flex items-center gap-2">
+                      <Star className="w-3 h-3" />
+                      Product Highlights
+                    </h3>
+                    <motion.div
+                      animate={{
+                        rotate: expandedSections.description ? 45 : 0,
+                      }}
+                      transition={{ duration: 0.2 }}
+                      className="w-6 h-6 bg-neutral-900 text-white flex items-center justify-center"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </motion.div>
+                  </motion.button>
+                  <AnimatePresence>
+                    {expandedSections.description && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden border-t border-neutral-200"
+                      >
+                        <div className="p-4 pt-3 bg-neutral-50">
+                          {product.features && product.features.length > 0 && (
+                            <ul className="space-y-2">
+                              {product.features.map((feature, index) => (
+                                <motion.li
+                                  key={index}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{
+                                    duration: 0.3,
+                                    delay: index * 0.1,
+                                  }}
+                                  className="flex items-start gap-3 text-sm text-neutral-700"
+                                >
+                                  <Check className="w-3 h-3 text-neutral-500 mt-0.5 flex-shrink-0" />
+                                  <span className="leading-relaxed">
+                                    {feature}
+                                  </span>
+                                </motion.li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Delivery & Returns */}
+                <div className="border border-neutral-200 overflow-hidden bg-white">
+                  <motion.button
+                    whileHover={{ backgroundColor: "rgb(249 250 251)" }}
+                    onClick={() => toggleSection("delivery")}
+                    className="flex items-center justify-between w-full text-left p-4 transition-colors duration-200"
+                  >
+                    <h3 className="text-xs font-semibold text-neutral-900 tracking-wider uppercase flex items-center gap-2">
+                      <Package className="w-3 h-3" />
+                      Shipping & Returns
+                    </h3>
+                    <motion.div
+                      animate={{ rotate: expandedSections.delivery ? 45 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="w-6 h-6 bg-neutral-900 text-white flex items-center justify-center"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </motion.div>
+                  </motion.button>
+                  <AnimatePresence>
+                    {expandedSections.delivery && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden border-t border-neutral-200"
+                      >
+                        <div className="p-4 pt-3 bg-neutral-50">
+                          <div className="grid md:grid-cols-2 gap-4 text-sm text-neutral-700">
+                            <div>
+                              <h4 className="font-semibold text-neutral-900 mb-2 text-xs uppercase tracking-wide flex items-center gap-1">
+                                <Truck className="w-3 h-3" />
+                                Shipping
+                              </h4>
+                              <div className="space-y-1 leading-relaxed">
+                                <p>• Free shipping over ₹1,050</p>
+                                <p>• Standard: 3-5 days (£4.99)</p>
+                                <p>• Express: 1-2 days (£9.99)</p>
+                                <p>• Next day: £14.99</p>
+                              </div>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-neutral-900 mb-2 text-xs uppercase tracking-wide flex items-center gap-1">
+                                <RotateCcw className="w-3 h-3" />
+                                Returns
+                              </h4>
+                              <div className="space-y-1 leading-relaxed">
+                                <p>• 30-day return policy</p>
+                                <p>• Unworn with tags</p>
+                                <p>• Original packaging</p>
+                                <p>• Free faulty returns</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
       </div>
 
@@ -680,7 +797,7 @@ export default function ProductDetailPage({
               {/* Zoomable Image */}
               <div
                 ref={zoomImageRef}
-                className="relative w-full h-full overflow-hidden cursor-move"
+                className="relative w-full h-full overflow-hidden select-none"
                 style={{
                   cursor:
                     zoomLevel > 1
@@ -689,6 +806,7 @@ export default function ProductDetailPage({
                         : "grab"
                       : "default",
                 }}
+                onMouseDown={handleMouseDown}
               >
                 <motion.div
                   animate={{
@@ -696,7 +814,7 @@ export default function ProductDetailPage({
                     x: zoomPosition.x,
                     y: zoomPosition.y,
                   }}
-                  transition={{ type: "tween", duration: 0.2 }}
+                  transition={{ type: "tween", duration: isDragging ? 0 : 0.2 }}
                   className="w-full h-full flex items-center justify-center"
                 >
                   <Image
@@ -707,8 +825,9 @@ export default function ProductDetailPage({
                     alt={`${product.name} - View ${currentImageIndex + 1}`}
                     width={1200}
                     height={1600}
-                    className="max-w-full max-h-full object-contain"
+                    className="max-w-full max-h-full object-contain pointer-events-none"
                     priority
+                    draggable={false}
                   />
                 </motion.div>
               </div>
@@ -735,9 +854,7 @@ export default function ProductDetailPage({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                 >
-                  <h2 className="text-2xl mb-8">
-                    You May Also Like
-                  </h2>
+                  <h2 className="text-2xl mb-8">You May Also Like</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct, index) => {
                       const imageUrl = relatedProduct.images?.[0]

@@ -33,6 +33,7 @@ export interface Product {
   }
   images: SanityImage[]
   category: Category
+  sizes:any[]
   price: number
   originalPrice?: number
   description: any[]
