@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { Category as SanityCategory } from "@/types/sanity";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export default function Footer({
   categories,
@@ -43,9 +44,15 @@ export default function Footer({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Brand Section */}
             <div className="lg:col-span-2">
-              <h3 className="text-2xl font-light tracking-[0.2em] mb-4">
-                ROOH
-              </h3>
+              <div className="bg-white max-w-20 mb-5 flex justify-center">
+                <Image
+                  src={"/ROOH LOGO.png"}
+                  alt="rooh"
+                  className="h-20 w-20"
+                  width={100}
+                  height={100}
+                />
+              </div>
               <p className="text-white mb-6 max-w-md">
                 Your premier destination for elegant and modest fashion. We
                 offer the finest collection of abayas, hijabs, and accessories

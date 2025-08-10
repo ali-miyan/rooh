@@ -1,14 +1,112 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Search, Heart, User, ShoppingBag, Menu, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { motion, AnimatePresence } from "framer-motion"
-import TopBar from "../../components/top-bar"
+import type React from "react";
 
-export default function Header({ categories }: { categories: object[] }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isSearchFocused, setIsSearchFocused] = useState(false)
+import { useState } from "react";
+import { Search, Heart, User, ShoppingBag, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
+import TopBar from "../../components/top-bar"; // Keeping the original import path as provided
+import Image from "next/image";
+
+// Define a type for combined search results
+interface SearchSuggestion {
+  id: string;
+  name: string;
+  slug: string;
+  categoryName: string;
+  type: "product" | "category";
+}
+
+export default function Header({
+  categories,
+  products,
+}: {
+  categories: any[];
+  products: any[];
+}) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.length > 0) {
+      const lowerQuery = query.toLowerCase();
+
+      const filteredProducts = products
+        .filter((product: any) =>
+          product.name.toLowerCase().includes(lowerQuery)
+        )
+        .map((product: any) => ({
+          id: product._id,
+          name: product.name,
+          slug: product.slug.current,
+          categoryName: product.category.slug.current,
+          type: "product",
+        }));
+
+      const filteredCategories = categories
+        .filter((category: any) =>
+          category.name.toLowerCase().includes(lowerQuery)
+        )
+        .map((category: any) => ({
+          id: category._id,
+          name: category.name,
+          slug: category.slug.current,
+          type: "category",
+        }));
+
+      setSearchResults([...(filteredProducts as any), ...filteredCategories]);
+      setShowSuggestions(true);
+    } else {
+      setSearchResults([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSearchFocus = () => {
+    if (searchQuery.length > 0 || searchResults.length > 0) {
+      setShowSuggestions(true);
+    }
+    setIsSearchFocused(true);
+  };
+
+  const handleSearchBlur = () => {
+    // Delay hiding suggestions to allow click on suggestion links
+    setTimeout(() => {
+      setShowSuggestions(false);
+    }, 100);
+    setIsSearchFocused(false);
+  };
+
+  // Helper function to highlight the search query within the text
+  const highlightText = (text: string, query: string) => {
+    if (!query) return text;
+    const lowerText = text.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    const index = lowerText.indexOf(lowerQuery);
+
+    if (index === -1) {
+      return text;
+    }
+
+    const pre = text.substring(0, index);
+    const match = text.substring(index, index + query.length);
+    const post = text.substring(index + query.length);
+
+    return (
+      <>
+        {pre}
+        <span className=" text-gray-900 bg-yellow-300">{match}</span>
+        {post}
+      </>
+    );
+  };
 
   return (
     <header className="w-full">
@@ -36,9 +134,7 @@ export default function Header({ categories }: { categories: object[] }) {
           }),
         }}
       />
-
       <TopBar />
-
       {/* Main Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -60,10 +156,14 @@ export default function Header({ categories }: { categories: object[] }) {
                 transition={{ duration: 0.2 }}
                 className="text-2xl lg:text-3xl font-light tracking-[0.2em] text-gray-900 cursor-pointer"
               >
-                ROOH
+                <Image
+                  src={"/ROOH LOGO.png"}
+                  alt="rooh"
+                  width={180}
+                  height={180}
+                />
               </motion.h1>
             </motion.div>
-
             {/* Search Bar - Desktop */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -74,10 +174,12 @@ export default function Header({ categories }: { categories: object[] }) {
               <div className="relative w-full">
                 <motion.input
                   whileFocus={{ scale: 1.02 }}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setIsSearchFocused(false)}
+                  onFocus={handleSearchFocus}
+                  onBlur={handleSearchBlur}
+                  onChange={handleSearchChange}
+                  value={searchQuery}
                   type="text"
-                  placeholder="Search"
+                  placeholder="Search products or categories..."
                   className="w-full px-4 py-2 pr-10 text-sm border border-gray-200 rounded-none focus:outline-none focus:border-gray-400 transition-all duration-200"
                 />
                 <motion.div
@@ -85,11 +187,38 @@ export default function Header({ categories }: { categories: object[] }) {
                   transition={{ duration: 0.2 }}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2"
                 >
-                  <Search className="h-4 w-4 text-gray-400" />
+                  <Search className="h-4 w-4 -mt-2 text-gray-400" />
                 </motion.div>
+
+                <AnimatePresence>
+                  {showSuggestions && searchResults.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute z-10 w-full bg-white border border-gray-200 shadow-lg mt-1 max-h-60 overflow-y-auto"
+                    >
+                      {searchResults.map((item) => (
+                        <a
+                          key={item.id}
+                          href={
+                            item.type === "product"
+                              ? `/category/${item.categoryName}/products/${item.slug}`
+                              : `/category/${item.slug}`
+                          }
+                          className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                          // Prevent blur from hiding suggestions before click registers
+                          onMouseDown={(e) => e.preventDefault()}
+                        >
+                          {highlightText(item.name, searchQuery)} ({item.type})
+                        </a>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
-
             {/* Right Icons */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -97,24 +226,49 @@ export default function Header({ categories }: { categories: object[] }) {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="flex items-center space-x-4"
             >
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="ghost" size="sm" className="hidden lg:flex p-2">
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden lg:flex p-2"
+                >
                   <Heart className="h-5 w-5 text-gray-600" />
                 </Button>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="ghost" size="sm" className="hidden lg:flex p-2">
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden lg:flex p-2"
+                >
                   <User className="h-5 w-5 text-gray-600" />
                 </Button>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Button variant="ghost" size="sm" className="p-2">
                   <ShoppingBag className="h-5 w-5 text-gray-600" />
                 </Button>
               </motion.div>
               {/* Mobile Menu Button */}
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="ghost" size="sm" className="lg:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="lg:hidden p-2"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={isMenuOpen ? "close" : "menu"}
@@ -123,7 +277,11 @@ export default function Header({ categories }: { categories: object[] }) {
                       exit={{ rotate: 90, opacity: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                      {isMenuOpen ? (
+                        <X className="h-5 w-5" />
+                      ) : (
+                        <Menu className="h-5 w-5" />
+                      )}
                     </motion.div>
                   </AnimatePresence>
                 </Button>
@@ -131,7 +289,6 @@ export default function Header({ categories }: { categories: object[] }) {
             </motion.div>
           </div>
         </div>
-
         {/* Navigation Menu - Desktop */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -141,7 +298,7 @@ export default function Header({ categories }: { categories: object[] }) {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <nav className="flex justify-center space-x-8 py-4">
-              {categories.map((item:any, index) => (
+              {categories.map((item: any, index) => (
                 <motion.a
                   key={item._id}
                   initial={{ opacity: 0, y: -10 }}
@@ -163,7 +320,6 @@ export default function Header({ categories }: { categories: object[] }) {
             </nav>
           </div>
         </motion.div>
-
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMenuOpen && (
@@ -190,15 +346,45 @@ export default function Header({ categories }: { categories: object[] }) {
                 >
                   <input
                     type="text"
-                    placeholder="Search"
+                    placeholder="Search products or categories..."
                     className="w-full px-4 py-2 pr-10 text-sm border border-gray-200 rounded-none focus:outline-none focus:border-gray-400 transition-colors duration-200"
+                    onFocus={handleSearchFocus}
+                    onBlur={handleSearchBlur}
+                    onChange={handleSearchChange}
+                    value={searchQuery}
                   />
                   <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <AnimatePresence>
+                    {showSuggestions && searchResults.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute z-10 w-full bg-white border border-gray-200 shadow-lg mt-1 max-h-60 overflow-y-auto"
+                      >
+                        {searchResults.map((item) => (
+                          <a
+                            key={item.id}
+                            href={
+                              item.type === "product"
+                                ? `/category/${item.categoryName}/products/${item.slug}`
+                                : `/category/${item.slug}`
+                            }
+                            className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                            onMouseDown={(e) => e.preventDefault()}
+                          >
+                            {highlightText(item.name, searchQuery)} ({item.type}
+                            )
+                          </a>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
-
                 {/* Mobile Navigation */}
                 <nav className="space-y-3">
-                  {categories.map((item:any, index) => (
+                  {categories.map((item: any, index) => (
                     <motion.a
                       key={item._id}
                       initial={{ opacity: 0, x: -20 }}
@@ -213,7 +399,6 @@ export default function Header({ categories }: { categories: object[] }) {
                     </motion.a>
                   ))}
                 </nav>
-
                 {/* Mobile Icons */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -221,12 +406,18 @@ export default function Header({ categories }: { categories: object[] }) {
                   transition={{ duration: 0.3, delay: 0.6 }}
                   className="flex space-x-4 pt-4 border-t border-gray-100"
                 >
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <Button variant="ghost" size="sm" className="p-2">
                       <Heart className="h-5 w-5 text-gray-600" />
                     </Button>
                   </motion.div>
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <Button variant="ghost" size="sm" className="p-2">
                       <User className="h-5 w-5 text-gray-600" />
                     </Button>
@@ -238,5 +429,5 @@ export default function Header({ categories }: { categories: object[] }) {
         </AnimatePresence>
       </motion.div>
     </header>
-  )
+  );
 }

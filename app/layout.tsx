@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "./_components/header";
 import Footer from "./_components/footer";
-import { getCategories } from "@/lib/queries";
+import { getCategories, getProducts } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: {
@@ -67,11 +67,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const categories = await getCategories();
+  const products = await getProducts();
 
   return (
     <html lang="en" className="font-custom">
       <body>
-        <Header categories={categories} />
+        <Header categories={categories} products={products}  />
         {children}
         <Footer categories={categories} />
         
