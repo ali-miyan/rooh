@@ -224,7 +224,7 @@ export default function OccasionAbayasPage({
         transition={{ duration: 0.5, delay: 0.2 }}
         className="container mx-auto px-4 mb-8"
       >
-        <div className="flex flex-wrap items-center gap-4 pb-4 border-b border-neutral-200">
+        <div className="flex flex-wrap md:items-center gap-4 pb-4 border-b border-neutral-200">
           {/* Filter Dropdowns */}
           <div className="flex flex-wrap items-center gap-3 flex-1">
             {/* Category Filter */}
