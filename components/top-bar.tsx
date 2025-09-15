@@ -35,7 +35,7 @@ export default function TopBar() {
           <div className="hidden md:flex items-center space-x-4 text-xs">
              
             <div className="flex items-center space-x-1">
-              <span>USD $</span>
+              <span>INR ₹/span>
               <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
