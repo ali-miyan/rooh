@@ -5,7 +5,7 @@ export default function Features() {
     {
       icon: Truck,
       title: "Free Shipping",
-      description: "Free UK shipping on orders OVER ₹1050",
+      description: "Free shipping all over India",
     },
     {
       icon: Shield,
@@ -14,8 +14,8 @@ export default function Features() {
     },
     {
       icon: RotateCcw,
-      title: "Easy Returns",
-      description: "30-day hassle-free returns",
+      title: "No Returns",
+      description: "No Returns and Refunds",
     },
     {
       icon: Headphones,
