@@ -150,7 +150,7 @@ export default function AbayaFAQ() {
   }
 
   return (
-    <section className="w-full py-16 px-4 bg-white">
+    <section className="w-full py-4 px-4 bg-white">
       {/* JSON-LD Structured Data for SEO */}
       <script
         type="application/ld+json"
@@ -172,17 +172,17 @@ export default function AbayaFAQ() {
 
       <div className="max-w-4xl mx-auto">
         {/* Section Title */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
           <h2 className="text-2xl md:text-3xl font-medium text-neutral-800 tracking-[0.1em] uppercase">Abaya FAQs</h2>
-        </motion.div>
+        </motion.div> */}
 
         {/* FAQ Items */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -199,10 +199,10 @@ export default function AbayaFAQ() {
               />
             ))}
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Additional Info */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -216,7 +216,7 @@ export default function AbayaFAQ() {
           >
             CONTACT US
           </motion.button>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   )

@@ -134,7 +134,7 @@ export default function HeroSlider({
               "@type": "ImageObject",
               name: banner.title,
               description: banner.subtitle || banner.title,
-              contentUrl: urlFor(banner.image)?.width(1200).height(700).url() || '',
+              contentUrl: "",
               position: index + 1,
             })),
           }),

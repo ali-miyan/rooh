@@ -18,31 +18,31 @@ const testimonials: Testimonial[] = [
     id: "1",
     title: "PERFECT FIT",
     content:
-      "The quality is exceptional and the fit is perfect. I've received so many compliments wearing this abaya. Highly recommend!",
-    author: "SARAH",
+      "Alhamdulillah recieved the best…Abaya fits so well.. So happy to buy this from Rooh.",
+    author: "MARYAM",
     rating: 5,
   },
   {
     id: "2",
     title: "AWESOME",
     content:
-      "I love it I feel so beautiful and pure in it. I use it for prayer everyday. Very good quality. Thank you so much.",
-    author: "JOLANDA",
+      "No words to explain, it was more than i expected, Especially the material and the designs, design looks so gorgeos.",
+    author: "SANA",
     rating: 5,
   },
   {
     id: "3",
     title: "BEAUTIFUL DESIGN",
     content:
-      "The embroidery work is stunning and the fabric feels luxurious. This has become my favorite piece in my wardrobe.",
-    author: "AMINA",
+      "No words to explain, it was more than i expected, Especially the material and the designs, design looks so gorgeos.",
+    author: "MINHA",
     rating: 5,
   },
   {
     id: "4",
     title: "EXCELLENT SERVICE",
     content:
-      "Fast delivery and amazing customer service. The abaya exceeded my expectations in every way. Will definitely order again.",
+      "No words to explain, it was more than i expected, Especially the material and the designs, design looks so gorgeos.",
     author: "FATIMA",
     rating: 5,
   },
@@ -50,8 +50,8 @@ const testimonials: Testimonial[] = [
     id: "5",
     title: "HIGHLY RECOMMENDED",
     content:
-      "The attention to detail is remarkable. The quality of the fabric and the craftsmanship is outstanding. Worth every penny!",
-    author: "KHADIJA",
+      "No words to explain, it was more than i expected, Especially the material and the designs, design looks so gorgeos.",
+    author: "HUDHA",
     rating: 5,
   },
 ]

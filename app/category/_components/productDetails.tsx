@@ -606,7 +606,7 @@ export default function ProductDetailPage({
                 className="space-y-1 pt-4 border-t border-neutral-100"
               >
                 {/* Product Highlights */}
-                <div className="border border-neutral-200 overflow-hidden bg-white">
+                {/* <div className="border border-neutral-200 overflow-hidden bg-white">
                   <motion.button
                     whileHover={{ backgroundColor: "rgb(249 250 251)" }}
                     onClick={() => toggleSection("description")}
@@ -661,7 +661,7 @@ export default function ProductDetailPage({
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </div> */}
 
                 {/* Delivery & Returns */}
                 <div className="border border-neutral-200 overflow-hidden bg-white">
@@ -699,10 +699,10 @@ export default function ProductDetailPage({
                                 Shipping
                               </h4>
                               <div className="space-y-1 leading-relaxed">
-                                <p>• Free shipping over ₹1,050</p>
-                                <p>• Standard: 3-5 days (£4.99)</p>
-                                <p>• Express: 1-2 days (£9.99)</p>
-                                <p>• Next day: £14.99</p>
+                                <p>• Free shipping all over India</p>
+                                <p>• Estimate time: 2 weeks</p>
+                          
+                    
                               </div>
                             </div>
                             <div>
@@ -711,10 +711,8 @@ export default function ProductDetailPage({
                                 Returns
                               </h4>
                               <div className="space-y-1 leading-relaxed">
-                                <p>• 30-day return policy</p>
-                                <p>• Unworn with tags</p>
-                                <p>• Original packaging</p>
-                                <p>• Free faulty returns</p>
+                                <p>• No return or</p>
+                            
                               </div>
                             </div>
                           </div>
