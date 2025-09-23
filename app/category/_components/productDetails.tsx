@@ -345,7 +345,7 @@ export default function ProductDetailPage({
                   style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                 >
                   {product.images.map((image, index) => {
-                    const imageUrl = urlFor(image).width(600).height(800).url();
+                    const imageUrl = urlFor(image).url();
                     return (
                       <div key={index} className="w-full h-full flex-shrink-0">
                         <Image
@@ -401,8 +401,6 @@ export default function ProductDetailPage({
                     {row.map((image, imageIndex) => {
                       const globalIndex = rowIndex * 2 + imageIndex;
                       const imageUrl = urlFor(image)
-                        .width(600)
-                        .height(800)
                         .url();
                       return (
                         <motion.div
@@ -817,8 +815,6 @@ export default function ProductDetailPage({
                 >
                   <Image
                     src={urlFor(product.images[currentImageIndex])
-                      .width(1200)
-                      .height(1600)
                       .url()}
                     alt={`${product.name} - View ${currentImageIndex + 1}`}
                     width={1200}
@@ -857,8 +853,6 @@ export default function ProductDetailPage({
                     {relatedProducts.map((relatedProduct, index) => {
                       const imageUrl = relatedProduct.images?.[0]
                         ? urlFor(relatedProduct.images[0])
-                            .width(450)
-                            .height(600)
                             .url()
                         : "/placeholder.svg";
                       return (

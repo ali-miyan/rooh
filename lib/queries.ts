@@ -119,7 +119,6 @@ const PRODUCTS_WITH_COUNT_QUERY = `
   }
 `;
 
-
 const activeBanners = `*[_type == "banner" && isActive == true]{
   _id,
   title,
@@ -139,7 +138,7 @@ const activeBanners = `*[_type == "banner" && isActive == true]{
   },
   displayOrder,
   isActive
-}`
+}`;
 
 export async function getProductsWithCount(count: number): Promise<Product[]> {
   return await client.fetch(PRODUCTS_WITH_COUNT_QUERY, { count: count - 1 });
@@ -152,7 +151,9 @@ export async function getProduct(slug: string): Promise<Product | null> {
   return await client.fetch(SINGLE_PRODUCT_QUERY, { slug });
 }
 
-export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
+export async function getProductsByCategory(
+  categorySlug: string
+): Promise<Product[]> {
   return await client.fetch(PRODUCTS_BY_CATEGORY_QUERY, { categorySlug });
 }
 export async function getCategories(): Promise<Category[]> {

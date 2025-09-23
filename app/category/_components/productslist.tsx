@@ -423,7 +423,7 @@ function ProductCard({
   index: number;
 }) {
   const imageUrl = product.images?.[0]
-    ? urlFor(product.images[0]).width(450).height(600).url()
+    ? urlFor(product.images[0]).url()
     : "/placeholder.svg?height=600&width=450";
 
   return (

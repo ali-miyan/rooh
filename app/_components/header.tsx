@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import TopBar from "../../components/top-bar"; // Keeping the original import path as provided
 import Image from "next/image";
+import Link from "next/link";
 
 // Define a type for combined search results
 interface SearchSuggestion {
@@ -156,12 +157,14 @@ export default function Header({
                 transition={{ duration: 0.2 }}
                 className="text-2xl lg:text-3xl font-light tracking-[0.2em] text-gray-900 cursor-pointer"
               >
+                <Link href={"/"} >
                 <Image
                   src={"/ROOH LOGO.png"}
                   alt="rooh"
                   width={180}
                   height={180}
-                />
+                  />
+                  </Link>
               </motion.h1>
             </motion.div>
             {/* Search Bar - Desktop */}

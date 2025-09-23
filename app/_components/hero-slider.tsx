@@ -128,7 +128,7 @@ export default function HeroSlider({
             name: "Hero Collection Slider",
             description: "Featured banner collections",
             image: activeBanners.map((banner) => 
-              urlFor(banner.image)?.width(1200).height(700).url() || ''
+              urlFor(banner.image)?.url() || ''
             ),
             mainEntity: activeBanners.map((banner, index) => ({
               "@type": "ImageObject",
@@ -162,7 +162,7 @@ export default function HeroSlider({
                   className="w-full h-full"
                 >
                   <Image
-                    src={urlFor(currentBanner.image)?.width(1920).height(1080).url() || "/placeholder.svg"}
+                    src={urlFor(currentBanner.image)?.url() || "/placeholder.svg"}
                     alt={currentBanner.title}
                     fill
                     className="object-cover"
