@@ -70,6 +70,60 @@ export default function ProductDetailPage({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
+  const [mobileZoomLevel, setMobileZoomLevel] = useState(1);
+  const [mobileZoomPosition, setMobileZoomPosition] = useState({ x: 0, y: 0 });
+  const [isMobileDragging, setIsMobileDragging] = useState(false);
+  const [mobileDragStart, setMobileDragStart] = useState({ x: 0, y: 0 });
+  const [showMobileZoomControls, setShowMobileZoomControls] = useState(false);
+
+  const handleTouchStart = (e:any) => {
+    if (mobileZoomLevel > 1) {
+      setIsMobileDragging(true);
+      const touch = e.touches[0];
+      setMobileDragStart({
+        x: touch.clientX - mobileZoomPosition.x,
+        y: touch.clientY - mobileZoomPosition.y,
+      });
+      e.preventDefault();
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (isMobileDragging && mobileZoomLevel > 1) {
+      const touch = e.touches[0];
+      const newX = touch.clientX - mobileDragStart.x;
+      const newY = touch.clientY - mobileDragStart.y;
+
+      const maxX = (mobileZoomLevel - 1) * 150;
+      const maxY = (mobileZoomLevel - 1) * 200;
+
+      setMobileZoomPosition({
+        x: Math.max(-maxX, Math.min(maxX, newX)),
+        y: Math.max(-maxY, Math.min(maxY, newY)),
+      });
+      e.preventDefault();
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsMobileDragging(false);
+  };
+
+  const handleMobileZoomIn = () => {
+    setMobileZoomLevel((prev) => Math.min(prev + 0.5, 2.5));
+    setShowMobileZoomControls(true);
+  };
+
+  const handleMobileZoomOut = () => {
+    setMobileZoomLevel((prev) => Math.max(prev - 0.5, 1));
+    if (mobileZoomLevel <= 1.5) {
+      setMobileZoomPosition({ x: 0, y: 0 });
+    }
+    if (mobileZoomLevel <= 1) {
+      setShowMobileZoomControls(false);
+    }
+  };
+
   const imagesEndRef = useRef<HTMLDivElement>(null);
   const zoomImageRef = useRef<HTMLDivElement>(null);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -347,14 +401,37 @@ export default function ProductDetailPage({
                   {product.images.map((image, index) => {
                     const imageUrl = urlFor(image).url();
                     return (
-                      <div key={index} className="w-full h-full flex-shrink-0">
-                        <Image
-                          src={imageUrl || "/placeholder.svg"}
-                          alt={`${product.name} - View ${index + 1}`}
-                          width={600}
-                          height={800}
-                          className="w-full h-full object-cover"
-                        />
+                      <div
+                        key={index}
+                        className="w-full h-full flex-shrink-0 relative overflow-hidden"
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                        style={{
+                          touchAction: mobileZoomLevel > 1 ? "none" : "auto",
+                        }}
+                      >
+                        <motion.div
+                          animate={{
+                            scale: mobileZoomLevel,
+                            x: mobileZoomPosition.x,
+                            y: mobileZoomPosition.y,
+                          }}
+                          transition={{
+                            type: "tween",
+                            duration: isMobileDragging ? 0 : 0.2,
+                          }}
+                          className="w-full h-full flex items-center justify-center"
+                        >
+                          <Image
+                            src={imageUrl || "/placeholder.svg"}
+                            alt={`${product.name} - View ${index + 1}`}
+                            width={600}
+                            height={800}
+                            className="w-full h-full object-cover pointer-events-none"
+                            draggable={false}
+                          />
+                        </motion.div>
                       </div>
                     );
                   })}
@@ -363,23 +440,67 @@ export default function ProductDetailPage({
                 {/* Slider Controls */}
                 <button
                   onClick={prevSlide}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition-colors z-10"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition-colors z-10"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
 
+                {/* Mobile Zoom Controls */}
+                <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
+                  <button
+                    onClick={handleMobileZoomIn}
+                    className="bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+                    disabled={mobileZoomLevel >= 2.5}
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+                  <AnimatePresence>
+                    {showMobileZoomControls && (
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        onClick={handleMobileZoomOut}
+                        className="bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+                        disabled={mobileZoomLevel <= 1}
+                      >
+                        <ZoomOut className="w-4 h-4" />
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Zoom Level Indicator */}
+                <AnimatePresence>
+                  {mobileZoomLevel > 1 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute top-2 left-2 z-10 bg-black/60 text-white text-xs px-2 py-1 rounded-full"
+                    >
+                      {Math.round(mobileZoomLevel * 100)}%
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Dots Indicator */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                   {product.images.map((_, index) => (
                     <button
                       key={index}
-                      onClick={() => setCurrentSlide(index)}
+                      onClick={() => {
+                        setCurrentSlide(index);
+                        setMobileZoomLevel(1);
+                        setMobileZoomPosition({ x: 0, y: 0 });
+                        setShowMobileZoomControls(false);
+                      }}
                       className={`w-2 h-2 rounded-full transition-colors ${
                         index === currentSlide ? "bg-white" : "bg-white/50"
                       }`}
@@ -400,8 +521,7 @@ export default function ProductDetailPage({
                   >
                     {row.map((image, imageIndex) => {
                       const globalIndex = rowIndex * 2 + imageIndex;
-                      const imageUrl = urlFor(image)
-                        .url();
+                      const imageUrl = urlFor(image).url();
                       return (
                         <motion.div
                           key={globalIndex}
@@ -603,70 +723,12 @@ export default function ProductDetailPage({
                 transition={{ duration: 0.5, delay: 0.7 }}
                 className="space-y-1 pt-4 border-t border-neutral-100"
               >
-                {/* Product Highlights */}
-                {/* <div className="border border-neutral-200 overflow-hidden bg-white">
-                  <motion.button
-                    whileHover={{ backgroundColor: "rgb(249 250 251)" }}
-                    onClick={() => toggleSection("description")}
-                    className="flex items-center justify-between w-full text-left p-4 transition-colors duration-200"
-                  >
-                    <h3 className="text-xs font-semibold text-neutral-900 tracking-wider uppercase flex items-center gap-2">
-                      <Star className="w-3 h-3" />
-                      Product Highlights
-                    </h3>
-                    <motion.div
-                      animate={{
-                        rotate: expandedSections.description ? 45 : 0,
-                      }}
-                      transition={{ duration: 0.2 }}
-                      className="w-6 h-6 bg-neutral-900 text-white flex items-center justify-center"
-                    >
-                      <Plus className="w-3 h-3" />
-                    </motion.div>
-                  </motion.button>
-                  <AnimatePresence>
-                    {expandedSections.description && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden border-t border-neutral-200"
-                      >
-                        <div className="p-4 pt-3 bg-neutral-50">
-                          {product.features && product.features.length > 0 && (
-                            <ul className="space-y-2">
-                              {product.features.map((feature, index) => (
-                                <motion.li
-                                  key={index}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{
-                                    duration: 0.3,
-                                    delay: index * 0.1,
-                                  }}
-                                  className="flex items-start gap-3 text-sm text-neutral-700"
-                                >
-                                  <Check className="w-3 h-3 text-neutral-500 mt-0.5 flex-shrink-0" />
-                                  <span className="leading-relaxed">
-                                    {feature}
-                                  </span>
-                                </motion.li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div> */}
-
                 {/* Delivery & Returns */}
                 <div className="border border-neutral-200 overflow-hidden bg-white">
                   <motion.button
                     whileHover={{ backgroundColor: "rgb(249 250 251)" }}
                     onClick={() => toggleSection("delivery")}
-                    className="flex items-center justify-between w-full text-left p-4 transition-colors duration-200"
+                    className="flex items-centelr justify-between w-full text-left p-4 transition-colors duration-200"
                   >
                     <h3 className="text-xs font-semibold text-neutral-900 tracking-wider uppercase flex items-center gap-2">
                       <Package className="w-3 h-3" />
@@ -699,8 +761,6 @@ export default function ProductDetailPage({
                               <div className="space-y-1 leading-relaxed">
                                 <p>• Free shipping all over India</p>
                                 <p>• Estimate time: 2 weeks</p>
-                          
-                    
                               </div>
                             </div>
                             <div>
@@ -710,7 +770,6 @@ export default function ProductDetailPage({
                               </h4>
                               <div className="space-y-1 leading-relaxed">
                                 <p>• No return or</p>
-                            
                               </div>
                             </div>
                           </div>
@@ -814,8 +873,7 @@ export default function ProductDetailPage({
                   className="w-full h-full flex items-center justify-center"
                 >
                   <Image
-                    src={urlFor(product.images[currentImageIndex])
-                      .url()}
+                    src={urlFor(product.images[currentImageIndex]).url()}
                     alt={`${product.name} - View ${currentImageIndex + 1}`}
                     width={1200}
                     height={1600}
@@ -852,8 +910,7 @@ export default function ProductDetailPage({
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct, index) => {
                       const imageUrl = relatedProduct.images?.[0]
-                        ? urlFor(relatedProduct.images[0])
-                            .url()
+                        ? urlFor(relatedProduct.images[0]).url()
                         : "/placeholder.svg";
                       return (
                         <motion.div
