@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Product } from "@/types/sanity";
 import { urlFor } from "@/lib/client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { PortableText } from "@portabletext/react";
 
 const filterOptions = {
@@ -39,11 +39,13 @@ export default function OccasionAbayasPage({
   categoryName: string;
   categoryDescription: any;
 }) {
+  
   const router = useRouter();
+  const path = usePathname()
 
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [filters, setFilters] = useState({
-    category: products.length > 0 ? products[0].category.name : "",
+    category: path === '/products' ? "All Categories" : categoryName,
     price: "All Prices",
   });
   const [sortBy, setSortBy] = useState("Recommended");
@@ -74,17 +76,17 @@ export default function OccasionAbayasPage({
       if (filters.price !== "All Prices") {
         const price = product.price;
         switch (filters.price) {
-          case "Under ₹100":
-            if (price >= 100) return false;
+          case "Under ₹1000":
+            if (price >= 1000) return false;
             break;
-          case "₹100 - ₹150":
-            if (price < 100 || price > 150) return false;
+          case "₹1000 - ₹1500":
+            if (price < 1000 || price > 1500) return false;
             break;
-          case "₹150 - ₹200":
-            if (price < 150 || price > 200) return false;
+          case "₹1500 - ₹2000":
+            if (price < 1500 || price > 2000) return false;
             break;
-          case "Over ₹200":
-            if (price <= 200) return false;
+          case "Over ₹2000":
+            if (price <= 2000) return false;
             break;
         }
       }
@@ -234,10 +236,16 @@ export default function OccasionAbayasPage({
               transition={{ duration: 0.3, delay: 0.05 }}
             >
               <FilterDropdown
-                label="Category"
-                options={[...categories.map((cat: any) => cat.name)]}
-                value={filters.category as any}
+                label="All Categories"
+                options={["All Categories",...categories.map((cat: any) => cat.name)]}
+                value={filters.category || "All Categories"}
                 onChange={(value) => {
+
+                  if (value === "All Categories") {
+                    router.push(`/products`);
+                    return;
+                  }
+
                   const selectedCategory = categories.find(
                     (cat: any) => cat.name === value
                   );

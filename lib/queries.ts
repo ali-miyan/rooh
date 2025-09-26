@@ -93,7 +93,8 @@ const RELATED_PRODUCTS_QUERY = `
     _createdAt,
     images,
     price,
-    originalPrice
+    originalPrice,
+    "category": category->slug.current,
   }
 `;
 const PRODUCTS_WITH_COUNT_QUERY = `

@@ -80,8 +80,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     }
 
     const relatedProducts = product.category?._id ? await getRelatedProducts(product.category._id, product._id) : []
-    console.log(relatedProducts[0]?.images[0]);
-    
 
     return <ProductDetailPage product={product} relatedProducts={relatedProducts} />
   } catch (error) {

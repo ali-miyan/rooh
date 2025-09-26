@@ -34,8 +34,6 @@ export default function ProductDetailPage({
   product,
   relatedProducts,
 }: ProductDetailPageProps) {
-  console.log(product);
-
   const [selectedLength, setSelectedLength] = useState(
     product.sizes?.[0]?.size === "custom"
       ? product.sizes[0].customSize
@@ -76,7 +74,7 @@ export default function ProductDetailPage({
   const [mobileDragStart, setMobileDragStart] = useState({ x: 0, y: 0 });
   const [showMobileZoomControls, setShowMobileZoomControls] = useState(false);
 
-  const handleTouchStart = (e:any) => {
+  const handleTouchStart = (e: any) => {
     if (mobileZoomLevel > 1) {
       setIsMobileDragging(true);
       const touch = e.touches[0];
@@ -912,39 +910,46 @@ export default function ProductDetailPage({
                       const imageUrl = relatedProduct.images?.[0]
                         ? urlFor(relatedProduct.images[0]).url()
                         : "/placeholder.svg";
+                        
                       return (
-                        <motion.div
-                          key={relatedProduct._id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            duration: 0.5,
-                            delay: 0.5 + index * 0.1,
-                          }}
-                          whileHover={{ y: -5 }}
-                          className="group cursor-pointer"
-                        >
-                          <div className="aspect-[3/4] bg-neutral-100 mb-4 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                            <Image
-                              src={imageUrl || "/placeholder.svg"}
-                              alt={relatedProduct.name}
-                              width={450}
-                              height={600}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          </div>
-                          <motion.div
-                            whileHover={{ scale: 1.02 }}
-                            className="space-y-2"
+                        <>
+                          <Link
+                            href={`/category/${relatedProduct.category}/products/${relatedProduct.slug.current}`}
                           >
-                            <div className="text-sm font-semibold text-neutral-800">
-                              ₹{relatedProduct.price.toFixed(2)}
-                            </div>
-                            <h3 className="text-sm text-neutral-700 leading-relaxed">
-                              {relatedProduct.name}
-                            </h3>
-                          </motion.div>
-                        </motion.div>
+                            <motion.div
+                              key={relatedProduct._id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.5,
+                                delay: 0.5 + index * 0.1,
+                              }}
+                              whileHover={{ y: -5 }}
+                              className="group cursor-pointer"
+                            >
+                              <div className="aspect-[3/4] bg-neutral-100 mb-4 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                                <Image
+                                  src={imageUrl || "/placeholder.svg"}
+                                  alt={relatedProduct.name}
+                                  width={450}
+                                  height={600}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                              </div>
+                              <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                className="space-y-2"
+                              >
+                                <div className="text-sm font-semibold text-neutral-800">
+                                  ₹{relatedProduct.price.toFixed(2)}
+                                </div>
+                                <h3 className="text-sm text-neutral-700 leading-relaxed">
+                                  {relatedProduct.name}
+                                </h3>
+                              </motion.div>
+                            </motion.div>
+                          </Link>
+                        </>
                       );
                     })}
                   </div>

@@ -154,7 +154,7 @@ export default function Footer({
                 </li>
                 <li>
                   <Link
-                    href={"/category/" + categories[0].slug.current}
+                    href={"/products"}
                     className="text-sm text-white hover:text-white/80 transition-colors duration-200"
                   >
                     All Products

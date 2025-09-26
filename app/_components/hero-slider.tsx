@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { urlFor } from "@/lib/client"
+import { useRouter } from "next/navigation"
 
 interface BannerImage {
   asset: {
@@ -59,7 +60,7 @@ export default function HeroSlider({
 }: HeroSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-
+  const router = useRouter()
   // Filter and sort active banners
   const activeBanners = banners
     .filter(banner => banner.isActive)
@@ -105,7 +106,7 @@ export default function HeroSlider({
       if (banner.link.openInNewTab) {
         window.open(banner.link.url, '_blank', 'noopener,noreferrer')
       } else {
-        window.location.href = banner.link.url
+        router.push(banner.link.url)
       }
     }
   }

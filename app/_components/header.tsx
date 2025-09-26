@@ -157,14 +157,14 @@ export default function Header({
                 transition={{ duration: 0.2 }}
                 className="text-2xl lg:text-3xl font-light tracking-[0.2em] text-gray-900 cursor-pointer"
               >
-                <Link href={"/"} >
-                <Image
-                  src={"/ROOH LOGO.png"}
-                  alt="rooh"
-                  width={180}
-                  height={180}
+                <Link href={"/"}>
+                  <Image
+                    src={"/ROOH LOGO.png"}
+                    alt="rooh"
+                    width={180}
+                    height={180}
                   />
-                  </Link>
+                </Link>
               </motion.h1>
             </motion.div>
             {/* Search Bar - Desktop */}
@@ -301,6 +301,23 @@ export default function Header({
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <nav className="flex justify-center space-x-8 py-4">
+              <motion.a
+                key={"ALL PRODUCTS"}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.5 * 0.05 }}
+                whileHover={{ y: -2, scale: 1.05 }}
+                href={`/products`}
+                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-all duration-200 tracking-wide relative"
+              >
+                {"ALL PRODUCTS"}
+                <motion.div
+                  className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900 origin-left"
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.2 }}
+                />
+              </motion.a>
               {categories.map((item: any, index) => (
                 <motion.a
                   key={item._id}
