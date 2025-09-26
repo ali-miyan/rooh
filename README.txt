@@ -52,6 +52,7 @@ In desktop apps
   https://theblog.adobe.com/can-variable-fonts-illustrator-cc
   https://helpx.adobe.com/nz/photoshop/using/fonts.html#variable_fonts
 
+
 Online
 
   https://developers.google.com/fonts/docs/getting_started
