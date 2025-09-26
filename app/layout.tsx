@@ -5,6 +5,11 @@ import Header from "./_components/header";
 import Footer from "./_components/footer";
 import { getCategories, getProducts } from "@/lib/queries";
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.roohbyreja.com";
+const logoUrl = `${siteUrl}/rooh-r-logo.png`; // Your brand logo
+const ogImageUrl = `${siteUrl}/og-image.jpg`; // Recommended 1200x630 image for SEO
+
 export const metadata: Metadata = {
   title: {
     default: "Rooh - Premium Luxury Abayas Collection",
@@ -14,6 +19,25 @@ export const metadata: Metadata = {
     "A premium collection of luxury abayas featuring contemporary designs and traditional elegance. Discover modest fashion with modern style.",
   generator: "Next.js",
   applicationName: "Rooh",
+  icons: {
+    icon: [
+      {
+        url: logoUrl,
+        sizes: "any",
+      },
+      {
+        url: "/icon.png",
+        type: "image/png",
+      },
+    ],
+    apple: [
+      {
+        url: "/apple-icon.png",
+        type: "image/png",
+      },
+    ],
+  },
+
   keywords: [
     "luxury abayas",
     "premium abayas",
@@ -29,7 +53,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://rooh.com"),
+  metadataBase: new URL(siteUrl),
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -37,11 +61,20 @@ export const metadata: Metadata = {
     title: "Rooh - Premium Luxury Abayas Collection",
     description:
       "A premium collection of luxury abayas featuring contemporary designs and traditional elegance.",
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: "Rooh - Premium Luxury Abayas",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@rooh",
     creator: "@rooh",
+    images: [ogImageUrl],
   },
   robots: {
     index: true,
@@ -53,11 +86,6 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
-  },
-  verification: {
-    // Add your verification tokens here
-    // google: "your-google-verification-token",
-    // yandex: "your-yandex-verification-token",
   },
 };
 
@@ -71,11 +99,24 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="font-custom">
+      <head>
+        {/* ✅ Structured Data for Logo (helps Google pick the right one) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              url: siteUrl,
+              logo: logoUrl,
+            }),
+          }}
+        />
+      </head>
       <body>
-        <Header categories={categories} products={products}  />
+        <Header categories={categories} products={products} />
         {children}
         <Footer categories={categories} />
-        
       </body>
     </html>
   );
