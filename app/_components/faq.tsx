@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { Plus } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
+
 
 interface FAQItem {
   id: string
@@ -142,12 +144,12 @@ export default function AbayaFAQ() {
       {/* Decorative Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-white via-neutral-50 to-white opacity-70 pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto text-center relative z-10">
+      <div className="max-w-3xl mx-auto text-center relative z-10">
         {/* Decorative Divider */}
-        <div className="w-24 h-[2px] bg-gradient-to-r from-transparent via-neutral-400 to-transparent mx-auto mb-6" />
+        <div className="w-20 h-[2px] bg-gradient-to-r from-transparent via-neutral-400 to-transparent mx-auto mb-5" />
 
         {/* Elegant Text */}
-        <p className="text-xl md:text-1xl italic font-light text-neutral-600 leading-relaxed tracking-wide px-4">
+        <p className="text-base md:text-lg italic font-light text-neutral-600 leading-relaxed tracking-wide px-2">
           “Rooted in love, stitched with purpose — Rooh by Reja was born from the
           shared dream of two sisters who believed that modest fashion could be
           both soulful and statement-making. What began as a small, passion-fueled
@@ -155,11 +157,15 @@ export default function AbayaFAQ() {
           individuality is embraced, and elegance is redefined.”
         </p>
 
-        {/* Decorative Flourish (optional) */}
-        <div className="mt-8 flex justify-center">
-          <div className="w-12 h-12 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-400 text-2xl font-serif">
-            ✦
-          </div>
+        {/* Brand Logo */}
+        <div className="mt-10 flex justify-center">
+          <Image
+            src="/R LOGO.png"
+            alt="Rooh by Reja Logo"
+            width={60}
+            height={60}
+            className="opacity-80 hover:opacity-100 transition-opacity duration-300"
+          />
         </div>
       </div>
     </section>

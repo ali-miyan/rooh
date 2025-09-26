@@ -44,17 +44,17 @@ export default function Footer({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Brand Section */}
             <div className="lg:col-span-2">
-              <div className="bg-transparent max-w-20 mb-5 flex justify-center">
+              <div className="bg-transparent max-w-24 mb-2 flex justify-center"> {/* mb-5 → mb-2 (less space) */}
                 <Image
-                  src={"/rooh-r-logo.png"}
+                  src={"/rooh-logo-white.png"}
                   alt="rooh"
-                  className="h-20 w-20"
-                  width={100}
-                  height={100}
+                  className="h-26 w-26" // Increased from h-20 w-20
+                  width={120} // Increased from 120
+                  height={120} // Increased from 120
                 />
               </div>
-              <p className="text-white mb-6 max-w-md">
-At Rooh, every piece tells a story - inspired by deen, shaped for modesty, and made with purpose. We design with heart for women with grace and purpose.
+              <p className="text-white mb-6 max-w-md text-sm md:text-base leading-relaxed">
+                At Rooh, every piece tells a story - inspired by deen, shaped for modesty, and made with purpose. We design with heart for women with grace and purpose.
               </p>
 
               {/* Contact Info */}
@@ -67,7 +67,7 @@ At Rooh, every piece tells a story - inspired by deen, shaped for modesty, and m
                     rel="noopener noreferrer"
                     className="text-sm hover:underline"
                   >
-                    {whatsappNumber} (WhatsApp)
+                    +968 76429013 (WhatsApp)
                   </a>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -114,7 +114,12 @@ At Rooh, every piece tells a story - inspired by deen, shaped for modesty, and m
                   className="p-2 text-white hover:text-white hover:bg-white/10"
                   asChild
                 >
-                  <a href="#" aria-label="Facebook">
+                  <a
+                    href="https://www.facebook.com/profile.php?id=61581334205733"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                  >
                     <Facebook className="h-5 w-5" />
                   </a>
                 </Button>
