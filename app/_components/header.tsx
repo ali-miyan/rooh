@@ -119,7 +119,7 @@ export default function Header({
             "@context": "https://schema.org",
             "@type": "Organization",
             name: "ROOH",
-            url: "https://rooh.com",
+            url: "https://www.instagram.com/roohby.reja",
             logo: "https://rooh.com/logo.png",
             sameAs: ["https://facebook.com/rooh", "https://instagram.com/rooh"],
             contactPoint: {

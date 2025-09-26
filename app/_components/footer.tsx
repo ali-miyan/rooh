@@ -44,9 +44,9 @@ export default function Footer({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Brand Section */}
             <div className="lg:col-span-2">
-              <div className="bg-white max-w-20 mb-5 flex justify-center">
+              <div className="bg-transparent max-w-20 mb-5 flex justify-center">
                 <Image
-                  src={"/ROOH LOGO.png"}
+                  src={"/rooh-r-logo.png"}
                   alt="rooh"
                   className="h-20 w-20"
                   width={100}
@@ -54,9 +54,7 @@ export default function Footer({
                 />
               </div>
               <p className="text-white mb-6 max-w-md">
-                Your premier destination for elegant and modest fashion. We
-                offer the finest collection of abayas, hijabs, and accessories
-                for the modern Muslim woman.
+At Rooh, every piece tells a story - inspired by deen, shaped for modesty, and made with purpose. We design with heart for women with grace and purpose.
               </p>
 
               {/* Contact Info */}
@@ -83,7 +81,7 @@ export default function Footer({
                 </div>
                 <div className="flex items-center space-x-3">
                   <MapPin className="h-4 w-4 theme-text-secondary" />
-                  <span className="text-sm">India, Oman</span>
+                  <span className="text-sm">India</span>
                 </div>
               </div>
 
@@ -95,27 +93,12 @@ export default function Footer({
                   className="p-2 text-white hover:text-white hover:bg-white/10"
                   asChild
                 >
-                  <a href="#" aria-label="Facebook">
-                    <Facebook className="h-5 w-5" />
-                  </a>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-2 text-white hover:text-white hover:bg-white/10"
-                  asChild
-                >
-                  <a href="#" aria-label="Twitter">
-                    <Twitter className="h-5 w-5" />
-                  </a>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-2 text-white hover:text-white hover:bg-white/10"
-                  asChild
-                >
-                  <a href="#" aria-label="Instagram">
+                  <a
+                    href="https://www.instagram.com/roohby.reja"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                  >
                     <svg
                       className="h-5 w-5"
                       viewBox="0 0 24 24"
@@ -131,10 +114,30 @@ export default function Footer({
                   className="p-2 text-white hover:text-white hover:bg-white/10"
                   asChild
                 >
+                  <a href="#" aria-label="Facebook">
+                    <Facebook className="h-5 w-5" />
+                  </a>
+                </Button>
+                {/* <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-2 text-white hover:text-white hover:bg-white/10"
+                  asChild
+                >
+                  <a href="#" aria-label="Twitter">
+                    <Twitter className="h-5 w-5" />
+                  </a>
+                </Button> */}
+                {/* <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-2 text-white hover:text-white hover:bg-white/10"
+                  asChild
+                >
                   <a href="#" aria-label="YouTube">
                     <Youtube className="h-5 w-5" />
                   </a>
-                </Button>
+                </Button> */}
               </div>
             </div>
 

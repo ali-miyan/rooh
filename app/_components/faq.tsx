@@ -137,86 +137,30 @@ function FAQItemComponent({ item, isOpen, onToggle, index }: FAQItemProps) {
 export default function AbayaFAQ() {
   const [openItems, setOpenItems] = useState<Set<string>>(new Set())
 
-  const toggleItem = (id: string) => {
-    setOpenItems((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(id)) {
-        newSet.delete(id)
-      } else {
-        newSet.add(id)
-      }
-      return newSet
-    })
-  }
-
   return (
-    <section className="w-full py-4 px-4 bg-white">
-      {/* JSON-LD Structured Data for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: faqData.map((item) => ({
-              "@type": "Question",
-              name: item.question,
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: item.answer,
-              },
-            })),
-          }),
-        }}
-      />
+    <section className="w-full bg-white py-20 px-4 relative overflow-hidden">
+      {/* Decorative Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-neutral-50 to-white opacity-70 pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto">
-        {/* Section Title */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-2xl md:text-3xl font-medium text-neutral-800 tracking-[0.1em] uppercase">Abaya FAQs</h2>
-        </motion.div> */}
+      <div className="max-w-4xl mx-auto text-center relative z-10">
+        {/* Decorative Divider */}
+        <div className="w-24 h-[2px] bg-gradient-to-r from-transparent via-neutral-400 to-transparent mx-auto mb-6" />
 
-        {/* FAQ Items */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-white rounded-lg shadow-sm"
-        >
-          <div className="divide-y divide-neutral-200">
-            {faqData.map((item, index) => (
-              <FAQItemComponent
-                key={item.id}
-                item={item}
-                isOpen={openItems.has(item.id)}
-                onToggle={() => toggleItem(item.id)}
-                index={index}
-              />
-            ))}
+        {/* Elegant Text */}
+        <p className="text-xl md:text-1xl italic font-light text-neutral-600 leading-relaxed tracking-wide px-4">
+          “Rooted in love, stitched with purpose — Rooh by Reja was born from the
+          shared dream of two sisters who believed that modest fashion could be
+          both soulful and statement-making. What began as a small, passion-fueled
+          idea between us has grown into a community — a movement — where
+          individuality is embraced, and elegance is redefined.”
+        </p>
+
+        {/* Decorative Flourish (optional) */}
+        <div className="mt-8 flex justify-center">
+          <div className="w-12 h-12 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-400 text-2xl font-serif">
+            ✦
           </div>
-        </motion.div> */}
-
-        {/* Additional Info */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center mt-12"
-        >
-          <p className="text-neutral-600 mb-4">Still have questions?</p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-neutral-800 text-white px-6 py-3 text-sm font-medium tracking-wide hover:bg-neutral-900 transition-colors duration-200"
-          >
-            CONTACT US
-          </motion.button>
-        </motion.div> */}
+        </div>
       </div>
     </section>
   )

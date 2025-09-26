@@ -34,7 +34,7 @@ const testimonials: Testimonial[] = [
     id: "3",
     title: "BEAUTIFUL DESIGN",
     content:
-      "No words to explain, it was more than i expected, Especially the material and the designs, design looks so gorgeos.",
+      "I received my brown abaya Its really pretty And the quality and the material really great. Its the best abaya i own.",
     author: "MINHA",
     rating: 5,
   },
@@ -42,15 +42,15 @@ const testimonials: Testimonial[] = [
     id: "4",
     title: "EXCELLENT SERVICE",
     content:
-      "No words to explain, it was more than i expected, Especially the material and the designs, design looks so gorgeos.",
-    author: "FATIMA",
+      "Recieved. it's so pretty started to love abaya again. jazakumullah.",
+    author: "FATHMA",
     rating: 5,
   },
   {
     id: "5",
     title: "HIGHLY RECOMMENDED",
     content:
-      "No words to explain, it was more than i expected, Especially the material and the designs, design looks so gorgeos.",
+      "Perfect fit. Alhamdulilah. Looking forward for more pretty abayas from Rooh.",
     author: "HUDHA",
     rating: 5,
   },
