@@ -628,8 +628,6 @@ export default function ProductDetailPage({
                         ? sizeObj.customSize
                         : sizeObj.size;
                     const isAvailable = sizeObj?.available !== false; 
-                    console.log(product.sizes);
-                    
 
                     return (
                       <motion.button
