@@ -626,24 +626,61 @@ export default function ProductDetailPage({
                 </div>
 
                 <div className="grid grid-cols-4 gap-2">
-                  {lengths.map((length, index) => (
-                    <motion.button
-                      key={length}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setSelectedLength(length)}
-                      className={`px-2 py-2.5 text-xs font-medium border transition-all duration-300 ${
-                        selectedLength === length
-                          ? "bg-neutral-900 text-white border-neutral-900 shadow-sm"
-                          : "bg-white text-neutral-700 border-neutral-300 hover:border-neutral-500"
-                      }`}
-                    >
-                      {length}"
-                    </motion.button>
-                  ))}
+                  {product.sizes?.map((sizeObj, index) => {
+                    const size =
+                      sizeObj.size === "custom"
+                        ? sizeObj.customSize
+                        : sizeObj.size;
+                    const isAvailable = sizeObj?.available !== false; 
+                    console.log(product.sizes);
+                    
+
+                    return (
+                      <motion.button
+                        key={size}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: 0.6 + index * 0.05,
+                        }}
+                        whileHover={isAvailable ? { scale: 1.02 } : {}}
+                        whileTap={isAvailable ? { scale: 0.98 } : {}}
+                        onClick={() => isAvailable && setSelectedLength(size)}
+                        disabled={!isAvailable}
+                        className={`relative px-2 py-2.5 text-xs font-medium border transition-all duration-300 ${
+                          selectedLength === size
+                            ? "bg-neutral-900 text-white border-neutral-900 shadow-sm"
+                            : "bg-white text-neutral-700 border-neutral-300 hover:border-neutral-500"
+                        } ${
+                          !isAvailable ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                      >
+                        {size}"
+                        {!isAvailable && (
+                          <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <span className="w-16 h-0.5 bg-red-500 rotate-45"></span>
+                          </span>
+                        )}
+                      </motion.button>
+                    );
+                  }) ||
+                    ["52", "54", "56", "58", "60", "62"].map((size) => (
+                      <motion.button
+                        key={size}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        onClick={() => setSelectedLength(size)}
+                        className={`px-2 py-2.5 text-xs font-medium border transition-all duration-300 ${
+                          selectedLength === size
+                            ? "bg-neutral-900 text-white border-neutral-900 shadow-sm"
+                            : "bg-white text-neutral-700 border-neutral-300 hover:border-neutral-500"
+                        }`}
+                      >
+                        {size}"
+                      </motion.button>
+                    ))}
                 </div>
               </motion.div>
 
@@ -910,7 +947,7 @@ export default function ProductDetailPage({
                       const imageUrl = relatedProduct.images?.[0]
                         ? urlFor(relatedProduct.images[0]).url()
                         : "/placeholder.svg";
-                        
+
                       return (
                         <>
                           <Link
