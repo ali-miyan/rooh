@@ -804,7 +804,7 @@ export default function ProductDetailPage({
                                 Returns
                               </h4>
                               <div className="space-y-1 leading-relaxed">
-                                <p>• No return or</p>
+                                <p>• No return or refund</p>
                               </div>
                             </div>
                           </div>
