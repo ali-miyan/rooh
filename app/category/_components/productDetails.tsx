@@ -34,11 +34,7 @@ export default function ProductDetailPage({
   product,
   relatedProducts,
 }: ProductDetailPageProps) {
-  const [selectedLength, setSelectedLength] = useState(
-    product.sizes?.[0]?.size === "custom"
-      ? product.sizes[0].customSize
-      : product.sizes?.[0]?.size || "52"
-  );
+  const [selectedLength, setSelectedLength] = useState();
   const [quantity, setQuantity] = useState(1);
   const [expandedSections, setExpandedSections] = useState<{
     [key: string]: boolean;
