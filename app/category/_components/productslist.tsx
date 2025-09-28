@@ -13,10 +13,10 @@ import { PortableText } from "@portabletext/react";
 const filterOptions = {
   price: [
     "All Prices",
-    "Under ₹1000",
-    "₹1000 - ₹1500",
-    "₹1500 - ₹2000",
-    "Over ₹2000",
+    "Under ₹100",
+    "₹100 - ₹150",
+    "₹150 - ₹200",
+    "Over ₹200",
   ],
 };
 
@@ -76,17 +76,17 @@ export default function OccasionAbayasPage({
       if (filters.price !== "All Prices") {
         const price = product.price;
         switch (filters.price) {
-          case "Under ₹1000":
-            if (price >= 1000) return false;
+          case "Under ₹2500":
+            if (price >= 2500) return false;
             break;
-          case "₹1000 - ₹1500":
-            if (price < 1000 || price > 1500) return false;
+          case "₹2500 - ₹3000":
+            if (price < 2500 || price > 3000) return false;
             break;
-          case "₹1500 - ₹2000":
-            if (price < 1500 || price > 2000) return false;
+          case "₹3000 - ₹3500":
+            if (price < 3000 || price > 3500) return false;
             break;
-          case "Over ₹2000":
-            if (price <= 2000) return false;
+          case "Over ₹4000":
+            if (price <= 4000) return false;
             break;
         }
       }
