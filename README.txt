@@ -47,6 +47,7 @@ Learn more about variable fonts
   https://variablefonts.typenetwork.com
   https://medium.com/variable-fonts
 
+
 In desktop apps
 
   https://theblog.adobe.com/can-variable-fonts-illustrator-cc
