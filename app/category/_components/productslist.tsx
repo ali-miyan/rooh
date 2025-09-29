@@ -16,7 +16,7 @@ const filterOptions = {
     "Under ₹3000",
     "₹3000 - ₹3500",
     "₹3500 - ₹4000",
-    "Over ₹4000"
+    "Over ₹4000" 
   ],
 };
 
@@ -24,7 +24,7 @@ const sortOptions = [
   "Recommended",
   "Price: Low to High",
   "Price: High to Low",
-  "Newest First",
+  "Newest First",asds
   "Oldest First",
 ];
 
