@@ -13,10 +13,10 @@ import { PortableText } from "@portabletext/react";
 const filterOptions = {
   price: [
     "All Prices",
-    "Under ₹100",
-    "₹100 - ₹150",
-    "₹150 - ₹200",
-    "Over ₹200",
+    "Under ₹3000",
+    "₹3000 - ₹3500",
+    "₹3500 - ₹4000",
+    "Over ₹4000"
   ],
 };
 
