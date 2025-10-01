@@ -76,14 +76,14 @@ export default function OccasionAbayasPage({
       if (filters.price !== "All Prices") {
         const price = product.price;
         switch (filters.price) {
-          case "Under ₹2500":
-            if (price >= 2500) return false;
-            break;
-          case "₹2500 - ₹3000":
-            if (price < 2500 || price > 3000) return false;
+          case "Under ₹3000":
+            if (price >= 3000) return false;
             break;
           case "₹3000 - ₹3500":
             if (price < 3000 || price > 3500) return false;
+            break;
+          case "₹3500 - ₹4000":
+            if (price < 3500 || price > 4000) return false;
             break;
           case "Over ₹4000":
             if (price <= 4000) return false;
