@@ -24,7 +24,7 @@ const sortOptions = [
   "Recommended",
   "Price: Low to High",
   "Price: High to Low",
-  "Newest First",asds
+  "Newest First",
   "Oldest First",
 ];
 
