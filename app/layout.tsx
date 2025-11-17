@@ -95,7 +95,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const categories = await getCategories();
-  const products = await getProducts();
 
   return (
     <html lang="en" className="font-custom">
@@ -114,7 +113,7 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <Header categories={categories} products={products} />
+        <Header categories={categories} />
         {children}
         <Footer categories={categories} />
       </body>

@@ -2,8 +2,7 @@ import { getCategories, getProducts } from "@/lib/queries";
 import type { Metadata } from "next";
 import OccasionAbayasPage from "../category/_components/productslist";
 
-// Enable ISR with 10 second revalidation
-export const revalidate = 10;
+export const revalidate = 3600
 
 // Generate metadata dynamically
 export async function generateMetadata(): Promise<Metadata> {

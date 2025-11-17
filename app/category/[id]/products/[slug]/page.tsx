@@ -3,8 +3,7 @@ import { notFound } from "next/navigation"
 import ProductDetailPage from "../../../_components/productDetails"
 import type { Metadata } from "next"
 
-// Enable ISR with 10 second revalidation
-export const revalidate = 10
+export const revalidate = 3600
 
 interface ProductPageProps {
   params: {

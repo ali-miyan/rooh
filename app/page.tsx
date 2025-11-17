@@ -7,8 +7,7 @@ import AbayaFAQ from "./_components/faq"
 import { getActiveBanners, getCategories, getProductsWithCount } from "@/lib/queries"
 import type { Metadata } from "next"
 
-// Enable ISR with 10 second revalidation
-export const revalidate = 10
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: "Rooh - Premium Luxury Abayas Collection",

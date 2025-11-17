@@ -2,8 +2,7 @@ import { getProductsByCategory, getCategories } from "@/lib/queries";
 import ProductsList from "../_components/productslist";
 import type { Metadata } from "next";
 
-// Enable ISR with 10 second revalidation
-export const revalidate = 10;
+export const revalidate = 3600
 
 interface ProductPageProps {
   params: {

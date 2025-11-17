@@ -2,11 +2,11 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Heart, User, ShoppingBag, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import TopBar from "../../components/top-bar"; // Keeping the original import path as provided
+import TopBar from "../../components/top-bar";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -21,16 +21,33 @@ interface SearchSuggestion {
 
 export default function Header({
   categories,
-  products,
 }: {
   categories: any[];
-  products: any[];
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [products, setProducts] = useState<any[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setIsLoadingProducts(true);
+        const response = await fetch('/api/products'); 
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setIsLoadingProducts(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -184,6 +201,7 @@ export default function Header({
                   type="text"
                   placeholder="Search products or categories..."
                   className="w-full px-4 py-2 pr-10 text-sm border border-gray-200 rounded-none focus:outline-none focus:border-gray-400 transition-all duration-200"
+                  disabled={isLoadingProducts}
                 />
                 <motion.div
                   animate={{ scale: isSearchFocused ? 1.1 : 1 }}
@@ -372,6 +390,7 @@ export default function Header({
                     onBlur={handleSearchBlur}
                     onChange={handleSearchChange}
                     value={searchQuery}
+                    disabled={isLoadingProducts}
                   />
                   <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <AnimatePresence>
