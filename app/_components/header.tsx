@@ -128,30 +128,6 @@ export default function Header({
 
   return (
     <header className="w-full">
-      {/* JSON-LD Structured Data for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            name: "ROOH",
-            url: "https://www.instagram.com/roohby.reja",
-            logo: "https://rooh.com/logo.png",
-            sameAs: ["https://facebook.com/rooh", "https://instagram.com/rooh"],
-            contactPoint: {
-              "@type": "ContactPoint",
-              contactType: "customer service",
-              availableLanguage: "English",
-            },
-            potentialAction: {
-              "@type": "SearchAction",
-              target: "https://rooh.com/search?q={search_term_string}",
-              "query-input": "required name=search_term_string",
-            },
-          }),
-        }}
-      />
       <TopBar />
       {/* Main Header */}
       <motion.div

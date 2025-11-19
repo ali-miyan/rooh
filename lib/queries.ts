@@ -7,7 +7,14 @@ const PRODUCT_QUERY = `
     _id,
     name,
     slug,
-    images,
+    images[] {
+    asset->{
+      _id,
+      url,
+    },
+    hotspot,
+    crop
+    },
     category->{
       _id,
       name,
@@ -30,12 +37,24 @@ const SINGLE_PRODUCT_QUERY = `
     _id,
     name,
     slug,
-    images,
-    category->{
+    images[] {
+    asset->{
+      _id,
+      url,
+    },
+    hotspot,
+    crop
+    },
+      category->{
       _id,
       name,
       slug,
-      image,
+      image{
+      asset->{
+        _id,
+        url
+      }
+      },
       description
     },
     price,
@@ -54,12 +73,24 @@ const PRODUCTS_BY_CATEGORY_QUERY = `
     _id,
     name,
     slug,
-    images,
+    images[] {
+      asset->{
+        _id,
+        url,
+      },
+      hotspot,
+      crop
+    },
     category->{
       _id,
       name,
       slug,
-      image,
+      image{
+        asset->{
+          _id,
+          url
+        }
+      },
       description
     },
     price,
@@ -79,7 +110,12 @@ const CATEGORIES_QUERY = `
     _id,
     name,
     slug,
-    image,
+    image{
+      asset->{
+        _id,
+        url
+      }
+    },
     description
   }
 `;
@@ -91,7 +127,14 @@ const RELATED_PRODUCTS_QUERY = `
     slug,
     sizes,
     _createdAt,
-    images,
+    images [] {
+      asset->{
+        _id,
+        url,
+      },
+      hotspot,
+      crop
+    },
     price,
     originalPrice,
     "category": category->slug.current,
@@ -102,7 +145,14 @@ const PRODUCTS_WITH_COUNT_QUERY = `
     _id,
     name,
     slug,
-    images,
+    images[] {
+      asset->{
+        _id,
+        url,
+      },
+      hotspot,
+      crop
+    },
     sizes,
     _createdAt,
     category->{

@@ -167,35 +167,6 @@ export default function TestimonialCarousel() {
 
   return (
     <section className="relative w-full py-20 px-4 theme-primary overflow-hidden">
-      {/* JSON-LD Structured Data for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            name: "Customer Testimonials",
-            description: "Customer reviews and testimonials for our abaya collection",
-            numberOfItems: testimonials.length,
-            itemListElement: testimonials.map((testimonial, index) => ({
-              "@type": "Review",
-              position: index + 1,
-              reviewRating: {
-                "@type": "Rating",
-                ratingValue: testimonial.rating,
-                bestRating: 5,
-              },
-              author: {
-                "@type": "Person",
-                name: testimonial.author,
-              },
-              reviewBody: testimonial.content,
-              name: testimonial.title,
-            })),
-          }),
-        }}
-      />
-
       {/* Decorative Patterns */}
       <DecorativePattern side="left" />
       <DecorativePattern side="right" />

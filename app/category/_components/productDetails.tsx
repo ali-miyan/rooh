@@ -21,7 +21,6 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import type { Product } from "@/types/sanity";
-import { urlFor } from "@/lib/client";
 import Link from "next/link";
 import sizeGuide from "@/public/WhatsApp Image 2025-08-03 at 23.00.44_712c86b7.jpg";
 
@@ -316,42 +315,6 @@ export default function ProductDetailPage({
           </motion.div>
         )}
       </AnimatePresence>
-      {/* JSON-LD Structured Data for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Product",
-            name: product.name,
-            description: product.description,
-            image: product.images?.map((img) => urlFor(img).url()),
-            brand: {
-              "@type": "Brand",
-              name: "Rooh",
-            },
-            offers: {
-              "@type": "Offer",
-              price: product.price,
-              priceCurrency: "GBP",
-              availability: product.inStock
-                ? "https://schema.org/InStock"
-                : "https://schema.org/OutOfStock",
-              seller: {
-                "@type": "Organization",
-                name: "Rooh",
-              },
-            },
-            aggregateRating: {
-              "@type": "AggregateRating",
-              ratingValue: "5",
-              reviewCount: "0",
-            },
-            category: product.category?.name,
-            sku: product._id,
-          }),
-        }}
-      />
 
       {/* Breadcrumb */}
       <motion.div
@@ -393,7 +356,7 @@ export default function ProductDetailPage({
                   style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                 >
                   {product.images.map((image, index) => {
-                    const imageUrl = urlFor(image).url();
+                    const imageUrl = image.asset.url;
                     return (
                       <div
                         key={index}
@@ -515,7 +478,7 @@ export default function ProductDetailPage({
                   >
                     {row.map((image, imageIndex) => {
                       const globalIndex = rowIndex * 2 + imageIndex;
-                      const imageUrl = urlFor(image).url();
+                      const imageUrl = image.asset.url;
                       return (
                         <motion.div
                           key={globalIndex}
@@ -902,7 +865,7 @@ export default function ProductDetailPage({
                   className="w-full h-full flex items-center justify-center"
                 >
                   <Image
-                    src={urlFor(product.images[currentImageIndex]).url()}
+                    src={product.images[currentImageIndex].asset.url}
                     alt={`${product.name} - View ${currentImageIndex + 1}`}
                     width={1200}
                     height={1600}
@@ -938,8 +901,10 @@ export default function ProductDetailPage({
                   <h2 className="text-2xl mb-8">You May Also Like</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct, index) => {
+                      console.log(relatedProduct,"sdfsdf");
+                      
                       const imageUrl = relatedProduct.images?.[0]
-                        ? urlFor(relatedProduct.images[0]).url()
+                        ? relatedProduct.images[0].asset.url
                         : "/placeholder.svg";
 
                       return (

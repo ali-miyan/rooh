@@ -4,7 +4,6 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/types/sanity";
-import { urlFor } from "@/lib/client";
 import Link from "next/link";
 
 interface CategoryCardProps {
@@ -19,9 +18,9 @@ function CategoryCard({
   className,
   isMainCategory = false,
   index,
-}: CategoryCardProps) {
+}: CategoryCardProps) {  
   const imageUrl = category.image
-    ? urlFor(category.image).url()
+    ? category.image.asset.url
     : "/placeholder.svg";
 
   return (
@@ -76,29 +75,6 @@ export default function FashionCategoryGridExact({
   return (
     <section className="w-full py-16 px-4 bg-neutral-50">
       {/* JSON-LD Structured Data for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            name: "Fashion Categories",
-            description:
-              "Browse our collection of fashion categories featuring premium clothing and accessories",
-            numberOfItems: categories.length,
-            itemListElement: categories.map((category, index) => ({
-              "@type": "Thing",
-              position: index + 1,
-              name: category.name,
-              image: category.image
-                ? urlFor(category.image).url()
-                : "/placeholder.svg",
-              url: `#${category.name.toLowerCase().replace(/\s+/g, "-")}`,
-            })),
-          }),
-        }}
-      />
-
       <div className="max-w-7xl mx-auto">
         {/* Top Row - 3 main categories */}
         <motion.div

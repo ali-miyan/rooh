@@ -5,7 +5,6 @@ import { Heart, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Product } from "@/types/sanity";
-import { urlFor } from "@/lib/client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { PortableText } from "@portabletext/react";
@@ -16,7 +15,7 @@ const filterOptions = {
     "Under ₹3000",
     "₹3000 - ₹3500",
     "₹3500 - ₹4000",
-    "Over ₹4000" 
+    "Over ₹4000",
   ],
 };
 
@@ -39,13 +38,12 @@ export default function OccasionAbayasPage({
   categoryName: string;
   categoryDescription: any;
 }) {
-  
   const router = useRouter();
-  const path = usePathname()
+  const path = usePathname();
 
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [filters, setFilters] = useState({
-    category: path === '/products' ? "All Categories" : categoryName,
+    category: path === "/products" ? "All Categories" : categoryName,
     price: "All Prices",
   });
   const [sortBy, setSortBy] = useState("Recommended");
@@ -128,44 +126,6 @@ export default function OccasionAbayasPage({
 
   return (
     <div className="min-h-screen bg-white font-custom">
-      {/* JSON-LD Structured Data for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            name: "Occasion Abayas Collection",
-            description:
-              "Stunning collection of occasion abayas perfect for weddings, parties, and special events. Features intricate embellishments, luxurious fabrics, and flattering silhouettes.",
-            url: "/occasion-abayas",
-            mainEntity: {
-              "@type": "ItemList",
-              numberOfItems: filteredAndSortedProducts?.length || 0,
-              itemListElement: filteredAndSortedProducts?.map(
-                (product: Product, index: number) => ({
-                  "@type": "Product",
-                  position: index + 1,
-                  name: product.name,
-                  offers: {
-                    "@type": "Offer",
-                    price: product.price,
-                    priceCurrency: "INR",
-                    availability: product.inStock
-                      ? "https://schema.org/InStock"
-                      : "https://schema.org/OutOfStock",
-                  },
-                  image: product.images?.[0]
-                    ? urlFor(product.images[0]).url()
-                    : "/placeholder.svg",
-                  url: `/products/${product.slug.current}`,
-                })
-              ),
-            },
-          }),
-        }}
-      />
-
       {/* Breadcrumb */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -174,7 +134,9 @@ export default function OccasionAbayasPage({
         className="container mx-auto px-4 py-4"
       >
         <nav className="text-sm text-neutral-600">
-          <span><Link href={"/"}>Home</Link></span>
+          <span>
+            <Link href={"/"}>Home</Link>
+          </span>
           <span className="mx-2">/</span>
           <span className="lowercase">{categoryName}</span>
         </nav>
@@ -237,10 +199,12 @@ export default function OccasionAbayasPage({
             >
               <FilterDropdown
                 label="All Categories"
-                options={["All Categories",...categories.map((cat: any) => cat.name)]}
+                options={[
+                  "All Categories",
+                  ...categories.map((cat: any) => cat.name),
+                ]}
                 value={filters.category || "All Categories"}
                 onChange={(value) => {
-
                   if (value === "All Categories") {
                     router.push(`/products`);
                     return;
@@ -431,7 +395,7 @@ function ProductCard({
   index: number;
 }) {
   const imageUrl = product.images?.[0]
-    ? urlFor(product.images[0]).url()
+    ? product.images[0].asset.url
     : "/placeholder.svg?height=600&width=450";
 
   return (

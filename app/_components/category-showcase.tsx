@@ -5,7 +5,6 @@ import { Heart, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { urlFor } from "@/lib/client";
 
 interface ColorOption {
   name: string;
@@ -17,7 +16,7 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  images: string;
+  images: any;
   colors?: ColorOption[];
   isWishlisted?: boolean;
 }
@@ -29,9 +28,7 @@ interface ProductCardProps {
 }
 
 function ProductCard({ product, onWishlistToggle, index }: ProductCardProps) {
-   const imageUrl = product.images[0]
-      ? urlFor(product.images[0]).url()
-      : "/placeholder.svg";
+   const imageUrl = product.images?.[0]?.asset?.url
       
   return (
     <motion.div
@@ -147,7 +144,7 @@ function Pagination({
   );
 }
 
-export default function TrendingAbayas({ products }: { products: Product[] }) {
+export default function TrendingAbayas({ products }: { products: Product[] }) {  
   const [currentPage, setCurrentPage] = useState(1);
   const [productList, setProductList] = useState(products || []);
   const itemsPerPage = 4;
@@ -178,33 +175,6 @@ export default function TrendingAbayas({ products }: { products: Product[] }) {
 
   return (
     <section className="w-full py-16 px-4 bg-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            name: "Trending Abayas Collection",
-            description:
-              "Premium collection of luxury abayas featuring contemporary designs and traditional elegance",
-            numberOfItems: productList.length,
-            itemListElement: productList.map(
-              (product: Product, index: number) => ({
-                "@type": "Product",
-                position: index + 1,
-                name: product.name,
-                offers: {
-                  "@type": "Offer",
-                  price: product.price,
-                  priceCurrency: "INR",
-                  availability: "https://schema.org/InStock",
-                },
-                image: product.images[0],
-              })
-            ),
-          }),
-        }}
-      />
       <div className="max-w-7xl mx-auto">
         {/* Section Title */}
         <motion.div

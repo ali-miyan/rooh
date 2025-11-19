@@ -5,7 +5,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
-import { urlFor } from "@/lib/client"
 import { useRouter } from "next/navigation"
 
 interface BannerImage {
@@ -111,7 +110,7 @@ export default function HeroSlider({
     }
   }
 
-  const currentBanner = activeBanners[currentSlide]
+  const currentBanner = activeBanners[currentSlide]  
 
   return (
     <div
@@ -119,28 +118,6 @@ export default function HeroSlider({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* JSON-LD Structured Data for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ImageGallery",
-            name: "Hero Collection Slider",
-            description: "Featured banner collections",
-            image: activeBanners.map((banner) => 
-              urlFor(banner.image)?.url() || ''
-            ),
-            mainEntity: activeBanners.map((banner, index) => ({
-              "@type": "ImageObject",
-              name: banner.title,
-              description: banner.subtitle || banner.title,
-              contentUrl: "",
-              position: index + 1,
-            })),
-          }),
-        }}
-      />
 
       {/* Slides */}
       <div className="relative h-full">
@@ -163,7 +140,7 @@ export default function HeroSlider({
                   className="w-full h-full"
                 >
                   <Image
-                    src={urlFor(currentBanner.image)?.url() || "/placeholder.svg"}
+                    src={currentBanner.image.asset.url || "/placeholder.svg"}
                     alt={currentBanner.title}
                     fill
                     className="object-cover"
