@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/types/sanity";
 import Link from "next/link";
+import SanityImage from "@/lib/imageBuilder";
 
 interface CategoryCardProps {
   category: Category;
@@ -18,7 +19,7 @@ function CategoryCard({
   className,
   isMainCategory = false,
   index,
-}: CategoryCardProps) {  
+}: CategoryCardProps) {
   const imageUrl = category.image
     ? category.image.asset.url
     : "/placeholder.svg";
@@ -42,12 +43,11 @@ function CategoryCard({
           isMainCategory ? "aspect-[4/5]" : "aspect-[4/4]"
         )}
       >
-        <Image
-          src={imageUrl || "/placeholder.svg"}
-          alt={category.image.asset._type}
-          fill
+        <SanityImage
+          image={imageUrl}
           className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          alt={category.name}
+          fill
         />
         <div className="absolute inset-0 bg-black/5 transition-opacity duration-300 group-hover:bg-black/10" />
       </div>

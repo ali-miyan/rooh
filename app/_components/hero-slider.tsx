@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import SanityImage from "@/lib/imageBuilder"
 
 interface BannerImage {
   asset: {
@@ -139,13 +140,12 @@ export default function HeroSlider({
                   transition={{ duration: 8, ease: "easeOut" }}
                   className="w-full h-full"
                 >
-                  <Image
-                    src={currentBanner.image.asset.url || "/placeholder.svg"}
+                  <SanityImage
+                    image={currentBanner.image}
+                    className="object-cover"
                     alt={currentBanner.title}
                     fill
-                    className="object-cover"
-                    priority={currentSlide === 0}
-                    sizes="100vw"
+                    priority
                   />
                 </motion.div>
                 <div className="absolute inset-0 bg-black/20" />

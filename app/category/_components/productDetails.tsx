@@ -23,6 +23,7 @@ import { PortableText } from "@portabletext/react";
 import type { Product } from "@/types/sanity";
 import Link from "next/link";
 import sizeGuide from "@/public/WhatsApp Image 2025-08-03 at 23.00.44_712c86b7.jpg";
+import SanityImage from "@/lib/imageBuilder";
 
 interface ProductDetailPageProps {
   product: Product;
@@ -303,13 +304,10 @@ export default function ProductDetailPage({
               </button>
 
               {/* Size Guide Image */}
-              <Image
-                src={sizeGuide}
+              <SanityImage
+                image={sizeGuide}
                 alt="Size Guide Chart"
-                width={800}
-                height={600}
                 className="max-w-full max-h-full object-contain"
-                priority
               />
             </motion.div>
           </motion.div>
@@ -357,6 +355,7 @@ export default function ProductDetailPage({
                 >
                   {product.images.map((image, index) => {
                     const imageUrl = image.asset.url;
+                    
                     return (
                       <div
                         key={index}
@@ -380,13 +379,10 @@ export default function ProductDetailPage({
                           }}
                           className="w-full h-full flex items-center justify-center"
                         >
-                          <Image
-                            src={imageUrl || "/placeholder.svg"}
+                          <SanityImage
+                            image={imageUrl}
                             alt={`${product.name} - View ${index + 1}`}
-                            width={600}
-                            height={800}
                             className="w-full h-full object-cover pointer-events-none"
-                            draggable={false}
                           />
                         </motion.div>
                       </div>
@@ -487,11 +483,10 @@ export default function ProductDetailPage({
                           className="w-full aspect-[3/4] bg-neutral-100 overflow-hidden cursor-pointer rounded-lg shadow-sm hover:shadow-md"
                           onClick={() => openModal(globalIndex)}
                         >
-                          <Image
-                            src={imageUrl || "/placeholder.svg"}
+                          
+                          <SanityImage
+                            image={imageUrl}
                             alt={`${product.name} - View ${globalIndex + 1}`}
-                            width={600}
-                            height={800}
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                           />
                         </motion.div>
@@ -590,7 +585,7 @@ export default function ProductDetailPage({
                       sizeObj.size === "custom"
                         ? sizeObj.customSize
                         : sizeObj.size;
-                    const isAvailable = sizeObj?.available !== false; 
+                    const isAvailable = sizeObj?.available !== false;
 
                     return (
                       <motion.button
@@ -864,11 +859,9 @@ export default function ProductDetailPage({
                   transition={{ type: "tween", duration: isDragging ? 0 : 0.2 }}
                   className="w-full h-full flex items-center justify-center"
                 >
-                  <Image
-                    src={product.images[currentImageIndex].asset.url}
+                  <SanityImage
+                    image={product.images[currentImageIndex]}
                     alt={`${product.name} - View ${currentImageIndex + 1}`}
-                    width={1200}
-                    height={1600}
                     className="max-w-full max-h-full object-contain pointer-events-none"
                     priority
                     draggable={false}
@@ -901,8 +894,6 @@ export default function ProductDetailPage({
                   <h2 className="text-2xl mb-8">You May Also Like</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct, index) => {
-                      console.log(relatedProduct,"sdfsdf");
-                      
                       const imageUrl = relatedProduct.images?.[0]
                         ? relatedProduct.images[0].asset.url
                         : "/placeholder.svg";
@@ -924,11 +915,9 @@ export default function ProductDetailPage({
                               className="group cursor-pointer"
                             >
                               <div className="aspect-[3/4] bg-neutral-100 mb-4 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                                <Image
-                                  src={imageUrl || "/placeholder.svg"}
+                                <SanityImage
+                                  image={imageUrl}
                                   alt={relatedProduct.name}
-                                  width={450}
-                                  height={600}
                                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
                               </div>

@@ -5,6 +5,7 @@ import { Heart, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import SanityImage from "@/lib/imageBuilder";
 
 interface ColorOption {
   name: string;
@@ -28,8 +29,8 @@ interface ProductCardProps {
 }
 
 function ProductCard({ product, onWishlistToggle, index }: ProductCardProps) {
-   const imageUrl = product.images?.[0]?.asset?.url
-      
+  const imageUrl = product.images?.[0]?.asset?.url;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -39,12 +40,11 @@ function ProductCard({ product, onWishlistToggle, index }: ProductCardProps) {
     >
       {/* Product Image */}
       <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100">
-        <Image
-          src={imageUrl || "/placeholder.svg"}
+        <SanityImage
+          image={imageUrl}
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
           alt={product.name}
           fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
         />
         {/* Wishlist Button */}
         <motion.button
@@ -144,7 +144,7 @@ function Pagination({
   );
 }
 
-export default function TrendingAbayas({ products }: { products: Product[] }) {  
+export default function TrendingAbayas({ products }: { products: Product[] }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [productList, setProductList] = useState(products || []);
   const itemsPerPage = 4;
@@ -198,7 +198,12 @@ export default function TrendingAbayas({ products }: { products: Product[] }) {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8"
           >
             {currentProducts.map((product: Product, index: number) => (
-              <Link key={index} href={`/category/${(product as any)?.category.slug.current}/products/${(product as any)?.slug?.current}`}>
+              <Link
+                key={index}
+                href={`/category/${
+                  (product as any)?.category.slug.current
+                }/products/${(product as any)?.slug?.current}`}
+              >
                 <ProductCard
                   key={product.id}
                   product={product}

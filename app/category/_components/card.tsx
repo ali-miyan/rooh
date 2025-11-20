@@ -1,3 +1,4 @@
+import SanityImage from "@/lib/imageBuilder"
 import { Heart } from "lucide-react"
 import Image from "next/image"
 
@@ -23,11 +24,11 @@ export function ProductCard({
     <div className="group cursor-pointer">
       {/* Product Image */}
       <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-neutral-100">
-        <Image
-          src={product.image || "/placeholder.svg"}
+        <SanityImage
+          image={product.image}
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
           alt={product.name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
         />
 
         {/* Wishlist Button */}

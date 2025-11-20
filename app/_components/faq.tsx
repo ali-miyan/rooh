@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
-
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import SanityImage from "@/lib/imageBuilder";
 
 interface FAQItem {
-  id: string
-  question: string
-  answer: string
+  id: string;
+  question: string;
+  answer: string;
 }
 
 const faqData: FAQItem[] = [
@@ -73,13 +73,13 @@ const faqData: FAQItem[] = [
     answer:
       "While both are modest garments, abayas are typically loose-fitting robes that open in the front and are worn over regular clothes. Jilbabs are usually pullover-style garments that are worn as complete outfits. Abayas tend to be more flowing and elegant, while jilbabs are often more fitted and practical for daily activities.",
   },
-]
+];
 
 interface FAQItemProps {
-  item: FAQItem
-  isOpen: boolean
-  onToggle: () => void
-  index: number
+  item: FAQItem;
+  isOpen: boolean;
+  onToggle: () => void;
+  index: number;
 }
 
 function FAQItemComponent({ item, isOpen, onToggle, index }: FAQItemProps) {
@@ -127,17 +127,19 @@ function FAQItemComponent({ item, isOpen, onToggle, index }: FAQItemProps) {
               transition={{ duration: 0.3, delay: 0.1 }}
               className="pb-6 pr-10"
             >
-              <p className="text-sm md:text-base text-neutral-600 leading-relaxed">{item.answer}</p>
+              <p className="text-sm md:text-base text-neutral-600 leading-relaxed">
+                {item.answer}
+              </p>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
-  )
+  );
 }
 
 export default function AbayaFAQ() {
-  const [openItems, setOpenItems] = useState<Set<string>>(new Set())
+  const [openItems, setOpenItems] = useState<Set<string>>(new Set());
 
   return (
     <section className="w-full bg-white py-20 px-4 relative overflow-hidden">
@@ -150,11 +152,11 @@ export default function AbayaFAQ() {
 
         {/* Elegant Text */}
         <p className="text-base md:text-lg italic font-light text-neutral-600 leading-relaxed tracking-wide px-2">
-          “Rooted in love, stitched with purpose — Rooh by Reja was born from the
-          shared dream of two sisters who believed that modest fashion could be
-          both soulful and statement-making. What began as a small, passion-fueled
-          idea between us has grown into a community — a movement — where
-          individuality is embraced, and elegance is redefined.”
+          “Rooted in love, stitched with purpose — Rooh by Reja was born from
+          the shared dream of two sisters who believed that modest fashion could
+          be both soulful and statement-making. What began as a small,
+          passion-fueled idea between us has grown into a community — a movement
+          — where individuality is embraced, and elegance is redefined.”
         </p>
 
         {/* Brand Logo */}
@@ -169,5 +171,5 @@ export default function AbayaFAQ() {
         </div>
       </div>
     </section>
-  )
+  );
 }

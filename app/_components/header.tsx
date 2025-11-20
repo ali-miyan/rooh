@@ -7,8 +7,9 @@ import { Search, Heart, User, ShoppingBag, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import TopBar from "../../components/top-bar";
-import Image from "next/image";
 import Link from "next/link";
+import SanityImage from "@/lib/imageBuilder";
+import Image from "next/image";
 
 // Define a type for combined search results
 interface SearchSuggestion {
@@ -19,11 +20,7 @@ interface SearchSuggestion {
   type: "product" | "category";
 }
 
-export default function Header({
-  categories,
-}: {
-  categories: any[];
-}) {
+export default function Header({ categories }: { categories: any[] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,11 +33,11 @@ export default function Header({
     const fetchProducts = async () => {
       try {
         setIsLoadingProducts(true);
-        const response = await fetch('/api/products'); 
+        const response = await fetch("/api/products");
         const data = await response.json();
         setProducts(data);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching products:", error);
       } finally {
         setIsLoadingProducts(false);
       }

@@ -14,6 +14,7 @@ import Link from "next/link";
 import type { Category as SanityCategory } from "@/types/sanity";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import SanityImage from "@/lib/imageBuilder";
 
 export default function Footer({
   categories,

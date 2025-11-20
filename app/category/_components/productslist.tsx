@@ -8,6 +8,7 @@ import type { Product } from "@/types/sanity";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { PortableText } from "@portabletext/react";
+import SanityImage from "@/lib/imageBuilder";
 
 const filterOptions = {
   price: [
@@ -411,11 +412,12 @@ function ProductCard({
       >
         {/* Product Image */}
         <div className="relative aspect-[3/4] mb-4 overflow-hidden bg-neutral-100">
-          <Image
-            src={imageUrl || "/placeholder.svg"}
+         
+          <SanityImage
+            image={imageUrl}
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
             alt={product.name}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {/* Wishlist Button */}
           <motion.button
