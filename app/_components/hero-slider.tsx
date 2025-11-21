@@ -140,12 +140,10 @@ export default function HeroSlider({
                   transition={{ duration: 8, ease: "easeOut" }}
                   className="w-full h-full"
                 >
-                  <SanityImage
-                    image={currentBanner.image}
-                    className="object-cover"
+                  <img
+                    src={currentBanner.image.asset.url as any}
+                    className="object-cover w-full h-auto md:h-[600px] lg:h-[700px]"
                     alt={currentBanner.title}
-                    fill
-                    priority
                   />
                 </motion.div>
                 <div className="absolute inset-0 bg-black/20" />
