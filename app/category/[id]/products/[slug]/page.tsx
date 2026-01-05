@@ -4,6 +4,8 @@ import ProductDetailPage from "../../../_components/productDetails"
 import type { Metadata } from "next"
 
 export const revalidate = 3600
+export const dynamicParams = true;
+
 
 interface ProductPageProps {
   params: {
