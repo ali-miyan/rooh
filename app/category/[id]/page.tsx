@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 
 export const revalidate = 3600
 
-
 interface ProductPageProps {
   params: {
     id: string;
@@ -12,19 +11,19 @@ interface ProductPageProps {
 }
 
 // Generate static params for all categories
-// export async function generateStaticParams() {
-//   const categories = await getCategories();
+export async function generateStaticParams() {
+  const categories = await getCategories();
 
-//   return categories.map((category) => ({
-//     id: category.slug.current,
-//   }));
-// }
+  return categories.map((category) => ({
+    id: category.slug.current,
+  }));
+}
 
 // Generate metadata dynamically
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { id } = params;
+  const { id } = await params;
   const categories = await getCategories();
   const category = categories.find((cat) => cat.slug.current === id);
 
@@ -58,7 +57,7 @@ export async function generateMetadata({
 }
 
 export default async function ProductsPage({ params }: ProductPageProps) {
-  const { id } = params;
+  const { id } = await params;
   const products = await getProductsByCategory(decodeURIComponent(id));
   const categories = await getCategories();
   const category = categories.find((cat) => {

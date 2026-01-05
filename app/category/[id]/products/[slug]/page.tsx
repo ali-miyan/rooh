@@ -4,8 +4,6 @@ import ProductDetailPage from "../../../_components/productDetails"
 import type { Metadata } from "next"
 
 export const revalidate = 3600
-export const dynamicParams = true;
-
 
 interface ProductPageProps {
   params: {
@@ -15,18 +13,18 @@ interface ProductPageProps {
 }
 
 // Generate static params for all products
-// export async function generateStaticParams() {
-//   const products = await getProducts()
+export async function generateStaticParams() {
+  const products = await getProducts()
 
-//   return products.map((product) => ({
-//     category: product.category.slug.current,
-//     slug: product.slug.current,
-//   }))
-// }
+  return products.map((product) => ({
+    category: product.category.slug.current,
+    slug: product.slug.current,
+  }))
+}
 
 // Generate metadata dynamically
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const { slug } = params
+  const { slug } = await params
 
   try {
     const product = await getProduct(decodeURIComponent(slug))
@@ -71,7 +69,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { slug } = params
+  const { slug } = await params
 
   try {
     const product = await getProduct(decodeURIComponent(slug))
