@@ -15,14 +15,14 @@ interface ProductPageProps {
 }
 
 // Generate static params for all products
-export async function generateStaticParams() {
-  const products = await getProducts()
+// export async function generateStaticParams() {
+//   const products = await getProducts()
 
-  return products.map((product) => ({
-    category: product.category.slug.current,
-    slug: product.slug.current,
-  }))
-}
+//   return products.map((product) => ({
+//     category: product.category.slug.current,
+//     slug: product.slug.current,
+//   }))
+// }
 
 // Generate metadata dynamically
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {

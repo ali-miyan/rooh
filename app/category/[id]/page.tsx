@@ -3,7 +3,7 @@ import ProductsList from "../_components/productslist";
 import type { Metadata } from "next";
 
 export const revalidate = 3600
-export const dynamicParams = true;
+
 
 interface ProductPageProps {
   params: {
@@ -12,13 +12,13 @@ interface ProductPageProps {
 }
 
 // Generate static params for all categories
-export async function generateStaticParams() {
-  const categories = await getCategories();
+// export async function generateStaticParams() {
+//   const categories = await getCategories();
 
-  return categories.map((category) => ({
-    id: category.slug.current,
-  }));
-}
+//   return categories.map((category) => ({
+//     id: category.slug.current,
+//   }));
+// }
 
 // Generate metadata dynamically
 export async function generateMetadata({
