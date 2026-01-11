@@ -22,7 +22,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import type { Product } from "@/types/sanity";
 import Link from "next/link";
-import sizeGuide from "@/public/WhatsApp Image 2025-08-03 at 23.00.44_712c86b7.jpg";
 import SanityImage from "@/lib/imageBuilder";
 
 interface ProductDetailPageProps {
@@ -304,9 +303,11 @@ export default function ProductDetailPage({
               </button>
 
               {/* Size Guide Image */}
-              <SanityImage
-                image={sizeGuide}
+              <Image
+                src={"/size-guide.jpg"}
                 alt="Size Guide Chart"
+                width={800}
+                height={900}
                 className="max-w-full max-h-full object-contain"
               />
             </motion.div>
@@ -355,7 +356,7 @@ export default function ProductDetailPage({
                 >
                   {product.images.map((image, index) => {
                     const imageUrl = image.asset.url;
-                    
+
                     return (
                       <div
                         key={index}
@@ -379,8 +380,8 @@ export default function ProductDetailPage({
                           }}
                           className="w-full h-full flex items-center justify-center"
                         >
-                          <SanityImage
-                            image={imageUrl}
+                          <Image
+                            src={"/ROOH LOGO.png"}
                             alt={`${product.name} - View ${index + 1}`}
                             className="w-full h-full object-cover pointer-events-none"
                           />
@@ -483,7 +484,6 @@ export default function ProductDetailPage({
                           className="w-full aspect-[3/4] bg-neutral-100 overflow-hidden cursor-pointer rounded-lg shadow-sm hover:shadow-md"
                           onClick={() => openModal(globalIndex)}
                         >
-                          
                           <SanityImage
                             image={imageUrl}
                             alt={`${product.name} - View ${globalIndex + 1}`}
