@@ -179,18 +179,6 @@ export default function Footer({
                     Contact Us
                   </a>
                 </li>
-                <li>
-                  <a
-                    href={`${whatsappUrl}&text=${encodeURIComponent(
-                      "Hi! I need help with sizing."
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-white hover:text-white/80 transition-colors duration-200"
-                  >
-                    Size Guide
-                  </a>
-                </li>
               </ul>
             </div>
 
