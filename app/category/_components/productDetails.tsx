@@ -380,8 +380,8 @@ export default function ProductDetailPage({
                           }}
                           className="w-full h-full flex items-center justify-center"
                         >
-                          <Image
-                            src={"/ROOH LOGO.png"}
+                          <SanityImage
+                            image={imageUrl}
                             alt={`${product.name} - View ${index + 1}`}
                             className="w-full h-full object-cover pointer-events-none"
                           />
