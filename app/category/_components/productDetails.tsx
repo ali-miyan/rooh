@@ -747,7 +747,7 @@ export default function ProductDetailPage({
                               </h4>
                               <div className="space-y-1 leading-relaxed">
                                 <p>• Free shipping all over India</p>
-                                <p>• Estimate time: 2 weeks</p>
+                                <p>• Estimate time: 3 weeks</p>
                               </div>
                             </div>
                             <div>
