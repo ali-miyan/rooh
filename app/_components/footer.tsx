@@ -47,7 +47,7 @@ export default function Footer({
             <div className="lg:col-span-2">
               <div className="bg-transparent max-w-24 mb-2 flex justify-center"> {/* mb-5 → mb-2 (less space) */}
                 <Image
-                  src={"/rooh-logo-white.png"}
+                  src={"/rooh-round.png"}
                   alt="rooh"
                   className="h-26 w-26" // Increased from h-20 w-20
                   width={120} // Increased from 120
@@ -55,7 +55,7 @@ export default function Footer({
                 />
               </div>
               <p className="text-white mb-6 max-w-md text-sm md:text-base leading-relaxed">
-                At Rooh, every piece tells a story - inspired by deen, shaped for modesty, and made with purpose. We design with heart for women with grace and purpose.
+                We create for the woman who finds her nobility in her Taqwa. At Rooh, your abaya isn’t just a garment; it is a reflection of the soul’s true worth.
               </p>
 
               {/* Contact Info */}
