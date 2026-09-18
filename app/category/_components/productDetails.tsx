@@ -23,6 +23,10 @@ import { PortableText } from "@portabletext/react";
 import type { Product } from "@/types/sanity";
 import Link from "next/link";
 import SanityImage from "@/lib/imageBuilder";
+import {
+  getPrimaryCategory,
+  getProductHref,
+} from "@/lib/product-category";
 
 interface ProductDetailPageProps {
   product: Product;
@@ -328,9 +332,17 @@ export default function ProductDetailPage({
           </span>
           <span className="mx-2">/</span>
           <span className="lowercase">
-            <Link href={"/category/" + product.category?.slug.current}>
-              {product.category?.name}
-            </Link>
+            {(product.categories?.length
+              ? product.categories
+              : [getPrimaryCategory(product)].filter(Boolean)
+            ).map((category, index) => (
+              <span key={category!._id}>
+                {index > 0 && <span className="mx-1">,</span>}
+                <Link href={"/category/" + category!.slug.current}>
+                  {category!.name}
+                </Link>
+              </span>
+            ))}
           </span>
           <span className="mx-2">/</span>
           <span className="text-neutral-800 lowercase">{product.name}</span>
@@ -901,7 +913,7 @@ export default function ProductDetailPage({
                       return (
                         <>
                           <Link
-                            href={`/category/${relatedProduct.category}/products/${relatedProduct.slug.current}`}
+                            href={getProductHref(relatedProduct)}
                           >
                             <motion.div
                               key={relatedProduct._id}

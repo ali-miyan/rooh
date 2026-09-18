@@ -2,29 +2,40 @@ import { getProduct, getRelatedProducts, getProducts } from "../../../../../lib/
 import { notFound } from "next/navigation"
 import ProductDetailPage from "../../../_components/productDetails"
 import type { Metadata } from "next"
+import {
+  getCategoryNames,
+  getPrimaryCategory,
+  getPrimaryCategorySlug,
+} from "../../../../../lib/product-category"
 
 export const revalidate = 3600
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     slug: string
-    category: string
-  }
+    id: string
+  }>
 }
 
-// Generate static params for all products
+// Generate static params for all products (one path per category membership)
 export async function generateStaticParams() {
   const products = await getProducts()
 
-  return products.map((product) => ({
-    category: product.category.slug.current,
-    slug: product.slug.current,
-  }))
+  return products.flatMap((product) => {
+    if (!product.categories?.length || !product.slug?.current) return []
+
+    return product.categories
+      .filter((category) => category?.slug?.current)
+      .map((category) => ({
+        id: category.slug.current,
+        slug: product.slug.current,
+      }))
+  })
 }
 
 // Generate metadata dynamically
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const { slug } = await params
+  const { slug, id } = await params
 
   try {
     const product = await getProduct(decodeURIComponent(slug))
@@ -36,14 +47,19 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       }
     }
 
+    const primaryCategory =
+      product.categories?.find((cat) => cat.slug.current === decodeURIComponent(id)) ||
+      getPrimaryCategory(product)
+    const categoryLabel = primaryCategory?.name || getCategoryNames(product) || "Collection"
+    const categorySlug = primaryCategory?.slug.current || getPrimaryCategorySlug(product)
     const price = product.originalPrice ? `$${product.price} (was $${product.originalPrice})` : `$${product.price}`
 
     return {
-      title: `${product.name} - ${product.category.name} | Rooh`,
-      description: `${product.name} - Premium ${product.category.name.toLowerCase()} starting at ${price}. ${product.features?.join(", ") || "Luxury abaya with contemporary design and traditional elegance."}`,
+      title: `${product.name} - ${categoryLabel} | Rooh`,
+      description: `${product.name} - Premium ${categoryLabel.toLowerCase()} starting at ${price}. ${product.features?.join(", ") || "Luxury abaya with contemporary design and traditional elegance."}`,
       keywords: [
         product.name.toLowerCase(),
-        product.category.name.toLowerCase(),
+        ...((product.categories || []).map((cat) => cat.name.toLowerCase())),
         "luxury abaya",
         "premium quality",
         "modest fashion",
@@ -51,12 +67,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       ],
       twitter: {
         card: "summary_large_image",
-        title: `${product.name} - ${product.category.name} | Rooh`,
-        description: `${product.name} - Premium ${product.category.name.toLowerCase()} starting at ${price}.`,
+        title: `${product.name} - ${categoryLabel} | Rooh`,
+        description: `${product.name} - Premium ${categoryLabel.toLowerCase()} starting at ${price}.`,
         images: product.images?.length > 0 ? [product.images[0].asset.url] : [],
       },
       alternates: {
-        canonical: `/products/${product.category.slug.current}/${product.slug.current}`,
+        canonical: categorySlug
+          ? `/category/${categorySlug}/products/${product.slug.current}`
+          : `/products`,
       },
     }
   } catch (error) {
@@ -78,7 +96,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
       notFound()
     }
 
-    const relatedProducts = product.category?._id ? await getRelatedProducts(product.category._id, product._id) : []
+    const categoryIds = (product.categories || []).map((cat) => cat._id).filter(Boolean)
+    const relatedProducts = await getRelatedProducts(categoryIds, product._id)
 
     return <ProductDetailPage product={product} relatedProducts={relatedProducts} />
   } catch (error) {

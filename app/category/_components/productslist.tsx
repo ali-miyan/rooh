@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { PortableText } from "@portabletext/react";
 import SanityImage from "@/lib/imageBuilder";
+import { getProductHref } from "@/lib/product-category";
 
 const filterOptions = {
   price: [
@@ -41,6 +42,9 @@ export default function OccasionAbayasPage({
 }) {
   const router = useRouter();
   const path = usePathname();
+  const preferredCategorySlug = path.startsWith("/category/")
+    ? decodeURIComponent(path.split("/")[2] || "")
+    : null;
 
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [filters, setFilters] = useState({
@@ -274,6 +278,7 @@ export default function OccasionAbayasPage({
                   isWishlisted={wishlist.includes(product._id)}
                   onToggleWishlist={() => toggleWishlist(product._id)}
                   index={index}
+                  preferredCategorySlug={preferredCategorySlug}
                 />
               )
             )}
@@ -389,11 +394,13 @@ function ProductCard({
   isWishlisted,
   onToggleWishlist,
   index,
+  preferredCategorySlug,
 }: {
   product: Product;
   isWishlisted: boolean;
   onToggleWishlist: () => void;
   index: number;
+  preferredCategorySlug?: string | null;
 }) {
   const imageUrl = product.images?.[0]
     ? product.images[0].asset.url
@@ -407,7 +414,7 @@ function ProductCard({
       whileHover={{ y: -5 }}
     >
       <Link
-        href={`/category/${product.category.slug.current}/products/${product.slug.current}`}
+        href={getProductHref(product, preferredCategorySlug)}
         className="group cursor-pointer"
       >
         {/* Product Image */}
@@ -447,6 +454,11 @@ function ProductCard({
           <h3 className="text-sm text-neutral-700 leading-relaxed line-clamp-2">
             {product.name}
           </h3>
+          {product.categories && product.categories.length > 0 && (
+            <p className="text-xs text-neutral-500 line-clamp-1">
+              {product.categories.map((cat) => cat.name).join(" · ")}
+            </p>
+          )}
         </motion.div>
       </Link>
     </motion.div>

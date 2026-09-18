@@ -61,7 +61,10 @@ export default function Header({ categories }: { categories: any[] }) {
           id: product._id,
           name: product.name,
           slug: product.slug.current,
-          categoryName: product.category.slug.current,
+          categoryName:
+            product.categories?.[0]?.slug?.current ||
+            product.categorySlug ||
+            "",
           type: "product",
         }));
 

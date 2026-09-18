@@ -1,6 +1,55 @@
 import { client } from "./client";
 import type { Product, Category } from "../types/sanity";
 
+const CATEGORY_PROJECTION = `
+  _id,
+  name,
+  slug,
+  image{
+    asset->{
+      _id,
+      url
+    }
+  },
+  description
+`;
+
+const CATEGORY_SUMMARY_PROJECTION = `
+  _id,
+  name,
+  slug
+`;
+
+/**
+ * Prefer `categories[]`; fall back to legacy single `category` until migration runs.
+ * Uses count() so an empty categories array does not block the legacy fallback.
+ */
+const CATEGORIES_FIELD = `
+  "categories": select(
+    count(categories) > 0 => categories[]->{ ${CATEGORY_SUMMARY_PROJECTION} },
+    defined(category) => [category->{ ${CATEGORY_SUMMARY_PROJECTION} }],
+    []
+  )
+`;
+
+const CATEGORIES_FIELD_FULL = `
+  "categories": select(
+    count(categories) > 0 => categories[]->{ ${CATEGORY_PROJECTION} },
+    defined(category) => [category->{ ${CATEGORY_PROJECTION} }],
+    []
+  )
+`;
+
+const IN_CATEGORY_FILTER = `(
+  $categorySlug in categories[]->slug.current
+  || category->slug.current == $categorySlug
+)`;
+
+const SHARES_CATEGORY_FILTER = `(
+  count((categories[]._ref)[@ in $categoryIds]) > 0
+  || category._ref in $categoryIds
+)`;
+
 // GROQ queries
 const PRODUCT_QUERY = `
   *[_type == "product" && list == true] | order(_createdAt desc) {
@@ -15,11 +64,7 @@ const PRODUCT_QUERY = `
     hotspot,
     crop
     },
-    category->{
-      _id,
-      name,
-      slug
-    },
+    ${CATEGORIES_FIELD},
     price,
     originalPrice,
     sizes,
@@ -45,18 +90,7 @@ const SINGLE_PRODUCT_QUERY = `
     hotspot,
     crop
     },
-      category->{
-      _id,
-      name,
-      slug,
-      image{
-      asset->{
-        _id,
-        url
-      }
-      },
-      description
-    },
+    ${CATEGORIES_FIELD_FULL},
     price,
     sizes,
     _createdAt,
@@ -68,8 +102,9 @@ const SINGLE_PRODUCT_QUERY = `
     list
   }
 `;
+
 const PRODUCTS_BY_CATEGORY_QUERY = `
-  *[_type == "product" && list == true && category->slug.current == $categorySlug] | order(_createdAt desc) {
+  *[_type == "product" && list == true && ${IN_CATEGORY_FILTER}] | order(_createdAt desc) {
     _id,
     name,
     slug,
@@ -81,18 +116,7 @@ const PRODUCTS_BY_CATEGORY_QUERY = `
       hotspot,
       crop
     },
-    category->{
-      _id,
-      name,
-      slug,
-      image{
-        asset->{
-          _id,
-          url
-        }
-      },
-      description
-    },
+    ${CATEGORIES_FIELD_FULL},
     price,
     sizes,
     _createdAt,
@@ -107,21 +131,12 @@ const PRODUCTS_BY_CATEGORY_QUERY = `
 
 const CATEGORIES_QUERY = `
   *[_type == "category"] | order(name asc) {
-    _id,
-    name,
-    slug,
-    image{
-      asset->{
-        _id,
-        url
-      }
-    },
-    description
+    ${CATEGORY_PROJECTION}
   }
 `;
 
 const RELATED_PRODUCTS_QUERY = `
-  *[_type == "product" && list == true && category._ref == $categoryId && _id != $productId][0...4] {
+  *[_type == "product" && list == true && _id != $productId && ${SHARES_CATEGORY_FILTER}][0...4] {
     _id,
     name,
     slug,
@@ -137,9 +152,11 @@ const RELATED_PRODUCTS_QUERY = `
     },
     price,
     originalPrice,
-    "category": category->slug.current,
+    ${CATEGORIES_FIELD},
+    "categorySlug": coalesce(categories[0]->slug.current, category->slug.current),
   }
 `;
+
 const PRODUCTS_WITH_COUNT_QUERY = `
   *[_type == "product" && list == true] | order(_createdAt desc) [0...$count] {
     _id,
@@ -155,11 +172,7 @@ const PRODUCTS_WITH_COUNT_QUERY = `
     },
     sizes,
     _createdAt,
-    category->{
-      _id,
-      name,
-      slug
-    },
+    ${CATEGORIES_FIELD},
     price,
     originalPrice,
     description,
@@ -218,8 +231,9 @@ export async function getActiveBanners(): Promise<any[]> {
 }
 
 export async function getRelatedProducts(
-  categoryId: string,
+  categoryIds: string[],
   productId: string
 ): Promise<Product[]> {
-  return await client.fetch(RELATED_PRODUCTS_QUERY, { categoryId, productId });
+  if (!categoryIds.length) return [];
+  return await client.fetch(RELATED_PRODUCTS_QUERY, { categoryIds, productId });
 }

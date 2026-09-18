@@ -3,7 +3,7 @@ export interface SanityImage {
   asset: {
     _ref: string
     _type: "reference"
-    url:string
+    url: string
   }
   hotspot?: {
     x: number
@@ -32,8 +32,8 @@ export interface Product {
     current: string
   }
   images: SanityImage[]
-  category: Category
-  sizes:any[]
+  categories?: Category[]
+  sizes: any[]
   price: number
   originalPrice?: number
   description: any[]
@@ -43,4 +43,6 @@ export interface Product {
   stockQuantity?: number
   list: boolean
   _createdAt: string
+  /** Related-product queries may project only the primary category slug */
+  categorySlug?: string
 }

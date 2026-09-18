@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import SanityImage from "@/lib/imageBuilder";
+import { getProductHref } from "@/lib/product-category";
+import type { Product as SanityProduct } from "@/types/sanity";
 
 interface ColorOption {
   name: string;
@@ -200,9 +202,7 @@ export default function TrendingAbayas({ products }: { products: Product[] }) {
             {currentProducts.map((product: Product, index: number) => (
               <Link
                 key={index}
-                href={`/category/${
-                  (product as any)?.category.slug.current
-                }/products/${(product as any)?.slug?.current}`}
+                href={getProductHref(product as unknown as SanityProduct)}
               >
                 <ProductCard
                   key={product.id}
