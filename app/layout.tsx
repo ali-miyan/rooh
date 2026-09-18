@@ -1,9 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "./_components/header";
-import Footer from "./_components/footer";
-import { getCategories, getProducts } from "@/lib/queries";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.roohbyreja.com";
@@ -89,17 +86,41 @@ export const metadata: Metadata = {
   },
 };
 
+function isSiteLive() {
+  const value = process.env.SITE_LIVE?.trim().toLowerCase();
+  return value === "true" || value === "1" || value === "yes";
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const categories = await getCategories();
+  const siteLive = isSiteLive();
+
+  // Only load Sanity / site chrome when the site is live.
+  // Top-level imports would crash maintenance mode without Sanity env vars.
+  let siteChrome: React.ReactNode = children;
+  if (siteLive) {
+    const [{ getCategories }, { default: Header }, { default: Footer }] =
+      await Promise.all([
+        import("@/lib/queries"),
+        import("./_components/header"),
+        import("./_components/footer"),
+      ]);
+    const categories = await getCategories();
+    siteChrome = (
+      <>
+        <Header categories={categories} />
+        {children}
+        <Footer categories={categories} />
+      </>
+    );
+  }
 
   return (
     <html lang="en" className="font-custom">
       <head>
-        {/* ✅ Structured Data for Logo (helps Google pick the right one) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -112,11 +133,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body>
-        <Header categories={categories} />
-        {children}
-        <Footer categories={categories} />
-      </body>
+      <body>{siteChrome}</body>
     </html>
   );
 }
