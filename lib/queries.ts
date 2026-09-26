@@ -191,6 +191,12 @@ const activeBanners = `*[_type == "banner" && isActive == true]{
     asset->{
       _id,
       url,
+      metadata {
+        dimensions {
+          width,
+          height
+        }
+      }
     },
     hotspot,
     crop

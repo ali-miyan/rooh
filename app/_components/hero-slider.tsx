@@ -112,6 +112,10 @@ export default function HeroSlider({
   }
 
   const currentBanner = activeBanners[currentSlide]  
+  const dimensions = currentBanner.image.asset.metadata?.dimensions
+  const isLandscape = !!dimensions && dimensions.width > dimensions.height
+  const hotspot = currentBanner.image.hotspot
+  const objectPosition = hotspot ? `${hotspot.x * 100}% ${hotspot.y * 100}%` : "center"
 
   return (
     <div
@@ -142,7 +146,8 @@ export default function HeroSlider({
                 >
                   <img
                     src={currentBanner.image.asset.url as any}
-                    className="object-cover w-full h-auto md:h-[600px] lg:h-[700px]"
+                    className={`object-cover w-full ${isLandscape ? "h-full" : "h-auto"} md:h-[600px] lg:h-[700px]`}
+                    style={isLandscape ? { objectPosition } : undefined}
                     alt={currentBanner.title}
                   />
                 </motion.div>
