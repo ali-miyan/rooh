@@ -308,7 +308,7 @@ export default function ProductDetailPage({
 
               {/* Size Guide Image */}
               <Image
-                src={"/rooh-size-guide.jpeg"}
+                src={"/rooh-size-guide-new.JPG"}
                 alt="Size Guide Chart"
                 width={800}
                 height={900}
